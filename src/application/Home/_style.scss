@@ -1,0 +1,47 @@
+.navbar-wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 15px;
+    justify-content: space-between;
+    background-color: $theme-red;
+
+    & > span {
+        line-height: 40px;
+        color: $theme-white;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.icon {
+            font-size: 20px;
+        }
+    }
+}
+
+.tap-wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 20px;
+    justify-content: space-evenly;
+    background-color: $theme-red;
+
+    a {
+        color: $theme-white;
+        text-decoration: none;
+        line-height: 25px;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+
+        &.selected {
+            border-bottom: 2px solid $theme-white;
+            font-weight: 700;
+        }
+
+        .tap-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

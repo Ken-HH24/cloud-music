@@ -1,0 +1,24 @@
+.slider-wrapper {
+    width: 100vw;
+}
+
+.slider-item {
+    width: 100vw;
+    position: relative;
+    padding: 0 1%;
+
+    &::before {
+        content: "";
+        height: 50%;
+        width: 100%;
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        background-color: $theme-red;
+    }
+
+    & > img {
+        border-radius: 5px;
+    }
+}
