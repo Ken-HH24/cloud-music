@@ -5,8 +5,13 @@
     font-weight: normal;
 }
 
+@font-face {
+    font-family: "NotoSansMono";
+    src: url(../assets/iconfont/NotoSansMono.ttf);
+}
+
 * {
-    font-family: "ScheherazadeNew";
+    font-family: "NotoSansMono";
 }
 
 $theme-red: #e74c3c;
