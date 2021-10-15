@@ -24,7 +24,7 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
                 {
                     recommendList.map((recommendItem, index) => {
                         return (
-                            <div className='recommend-item-wrapper' key={recommendItem.imgUrl}>
+                            <div className='recommend-item-wrapper' key={index}>
                                 <div className='recommend-item-img-wrapper'>
                                     <img
                                         className='recommend-item-img'
