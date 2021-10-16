@@ -99,7 +99,7 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         }
     }, [scrollObj, onPullDown]);
 
-    useEffect(() => {
+    useEffect(() => {        
         if (!scrollObj || !pullUp) {
             return;
         } else {

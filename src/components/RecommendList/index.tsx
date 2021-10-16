@@ -1,15 +1,10 @@
 import React from 'react';
+import { RecommendTypes } from '../../application/Recommend/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCount } from '../../api/utils';
 
-export interface RecommendItem {
-    imgUrl: string;
-    count: number;
-    desc: string;
-}
-
 export interface RecommendListPorps {
-    recommendList: RecommendItem[];
+    recommendList?: RecommendTypes.RecommendItem[];
 }
 
 const RecommendList: React.FC<RecommendListPorps> = (props) => {
@@ -22,24 +17,24 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
             </h1>
             <div className='recommend-list-content'>
                 {
-                    recommendList.map((recommendItem, index) => {
+                    (recommendList || []).map((recommendItem, index) => {
                         return (
                             <div className='recommend-item-wrapper' key={index}>
                                 <div className='recommend-item-img-wrapper'>
                                     <img
                                         className='recommend-item-img'
-                                        src={recommendItem.imgUrl}
+                                        src={recommendItem.picUrl}
                                         alt='img'
                                     ></img>
                                     <div className='recommend-item-info'>
                                         <FontAwesomeIcon icon='headphones-alt' />
                                         <span className='recommend-item-count'>
-                                            {getCount(recommendItem.count)}
+                                            {getCount(recommendItem.playCount)}
                                         </span>
                                     </div>
                                 </div>
                                 <div className='recommend-item-desc'>
-                                    {recommendItem.desc}
+                                    {recommendItem.name}
                                 </div>
                             </div>
                         )
@@ -49,6 +44,10 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
             </div>
         </div>
     )
+}
+
+RecommendList.defaultProps = {
+    recommendList: []
 }
 
 export default RecommendList;
