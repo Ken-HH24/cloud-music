@@ -6,6 +6,7 @@ import ObserveDOM from '@better-scroll/observe-dom'
 import { BScrollConstructor } from '@better-scroll/core/dist/types/BScroll';
 
 export interface ScrollInterface {
+    direction?: 'X' | 'Y';
     onScroll?: Function;
     onPullUp?: Function;
     onPullDown?: Function;
@@ -18,6 +19,7 @@ BScroll.use(PullUp);
 
 const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
     const {
+        direction,
         onPullUp,
         onScroll,
         onPullDown,
@@ -26,12 +28,14 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [scrollObj, setScrollObj] = useState<BScrollConstructor>();
-    
+
     const initScroll = () => {
         const scroll = new BScroll(scrollContainerRef.current as HTMLDivElement, {
             probeType: 3,
             click: true,
             observeDOM: true,
+            scrollX: direction === 'X',
+            scrollY: direction === 'Y',
             bounce: {
                 top: true,
                 bottom: true
@@ -46,7 +50,7 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
                 threshold: 90,
                 stop: 10
             }
-      
+
         });
         setScrollObj(scroll);
     }
@@ -99,7 +103,7 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         }
     }, [scrollObj, onPullDown]);
 
-    useEffect(() => {        
+    useEffect(() => {
         if (!scrollObj || !pullUp) {
             return;
         } else {
@@ -109,7 +113,7 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
             }
         }
     }, [scrollObj, onPullUp]);
-    
+
 
     return (
         <div
@@ -117,7 +121,7 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
             style={{
                 width: '100%',
                 height: '100%',
-                overflow: 'hidden'
+                overflow: 'hidden',
             }}
         >
             {children}

@@ -2,6 +2,7 @@ import { RouteConfig } from "react-router-config";
 import { Redirect } from 'react-router';
 import Home from '../application/Home';
 import Recommend from '../application/Recommend';
+import Singers from '../application/Singers';
 
 const routeConfig: RouteConfig[] = [
     {
@@ -18,6 +19,10 @@ const routeConfig: RouteConfig[] = [
             {
                 path: '/recommend',
                 component: Recommend
+            },
+            {
+                path: '/singers',
+                component: Singers
             }
         ]
     }
