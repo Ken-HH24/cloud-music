@@ -2,12 +2,19 @@ import { RecommendAcions } from './actionCreators'
 import { RecommendTypes } from '.';
 import * as actionTypes from './constants';
 
-const defaultState: RecommendTypes.IRecommendState = {
-    bannerList: [],
-    recommendList: []
+export interface IRecommendState {
+    bannerList: RecommendTypes.BannerItem[];
+    recommendList: RecommendTypes.RecommendItem[];
+    enterLoading: boolean;
 }
 
-const recommendReducer = (state: RecommendTypes.IRecommendState = defaultState, action: RecommendAcions): RecommendTypes.IRecommendState => {
+const defaultState: IRecommendState = {
+    bannerList: [],
+    recommendList: [],
+    enterLoading: true
+}
+
+const recommendReducer = (state: IRecommendState = defaultState, action: RecommendAcions): IRecommendState => {
     switch (action.type) {
         case actionTypes.CHANGE_BANNER:
             return {
@@ -19,6 +26,12 @@ const recommendReducer = (state: RecommendTypes.IRecommendState = defaultState, 
             return {
                 ...state,
                 recommendList: action.data
+            }
+        
+        case actionTypes.CHANGE_ENTER_LOADING:
+            return {
+                ...state,
+                enterLoading: action.data
             }
         
         default:

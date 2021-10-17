@@ -1,6 +1,7 @@
 import React from 'react';
 import { RecommendTypes } from '../../application/Recommend/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import LazyLoad from 'react-lazyload';
 import { getCount } from '../../api/utils';
 
 export interface RecommendListPorps {
@@ -21,11 +22,13 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
                         return (
                             <div className='recommend-item-wrapper' key={index}>
                                 <div className='recommend-item-img-wrapper'>
-                                    <img
-                                        className='recommend-item-img'
-                                        src={recommendItem.picUrl}
-                                        alt='img'
-                                    ></img>
+                                    <LazyLoad placeholder={<FontAwesomeIcon style={{width: '100%', height: '100%'}} icon='spinner' spin />}>
+                                        <img
+                                            className='recommend-item-img'
+                                            src={recommendItem.picUrl}
+                                            alt='img'
+                                        ></img>
+                                    </LazyLoad>
                                     <div className='recommend-item-info'>
                                         <FontAwesomeIcon icon='headphones-alt' />
                                         <span className='recommend-item-count'>

@@ -3,14 +3,19 @@ import * as actionTypes from './constants';
 import { BannerItem, RecommendItem } from './types'
 import { getBannerRequest, getRecommendListRequest } from '../../../api/request';
 
-export interface IChangeBannerAction {
+interface IChangeBannerAction {
     type: actionTypes.CHANGE_BANNER;
     data: BannerItem[];
 }
 
-export interface IChangeRecommendAction {
+interface IChangeRecommendAction {
     type: actionTypes.CHANGE_RECOMMEND_LIST;
     data: RecommendItem[];
+}
+
+interface IChangeEnterLoading {
+    type: actionTypes.CHANGE_ENTER_LOADING;
+    data: boolean;
 }
 
 export const changeBannerList = (data: BannerItem[]): IChangeBannerAction => ({
@@ -23,7 +28,12 @@ export const changeRecommendList = (data: RecommendItem[]): IChangeRecommendActi
     data
 })
 
-export type RecommendAcions = IChangeBannerAction | IChangeRecommendAction;
+export const changeEnterLoading = (data: boolean): IChangeEnterLoading => ({
+    type: actionTypes.CHANGE_ENTER_LOADING,
+    data
+})
+
+export type RecommendAcions = IChangeBannerAction | IChangeRecommendAction | IChangeEnterLoading;
 
 export const getBannerList = () => {
     return (dispatch: Dispatch<RecommendAcions>) => {
@@ -38,9 +48,11 @@ export const getBannerList = () => {
 
 export const getRecommendList = () => {
     return (dispatch: Dispatch<RecommendAcions>) => {
+        dispatch(changeEnterLoading(true));
         getRecommendListRequest().then(data => {
             console.log('recommendList', data);
             dispatch(changeRecommendList(data.result));
+            dispatch(changeEnterLoading(false));
         }).catch(err => {
             console.error('error !!!', err);
         })

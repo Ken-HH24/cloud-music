@@ -7,8 +7,3 @@ export interface RecommendItem {
 export interface BannerItem {
     imageUrl: string;
 }
-
-export interface IRecommendState {
-    bannerList: BannerItem[];
-    recommendList: RecommendItem[];
-}
