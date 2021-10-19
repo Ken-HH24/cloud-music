@@ -1,7 +1,9 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 
-const Loading: React.FC = () => {
+const Icon: React.FC<FontAwesomeIconProps> = (props) => {
+    const { ...restProps } = props;
+
     return (
         <div
             style={{
@@ -12,9 +14,9 @@ const Loading: React.FC = () => {
                 alignItems: 'center'
             }}
         >
-            <FontAwesomeIcon icon='spinner' spin size='4x' />
+            <FontAwesomeIcon {...restProps} />
         </div>
     )
 }
 
-export default Loading;
+export default Icon;

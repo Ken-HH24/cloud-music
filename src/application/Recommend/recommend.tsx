@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { withRouter } from 'react-router';
 import Slider from '../../components/Slider';
 import Scroll from '../../components/Scroll';
-import Loading from '../../components/Loading';
+import Icon from '../../components/Icon';
 import RecommendList from '../../components/RecommendList';
 import { RecommendTypes, actionCreators } from './store';
 import { connect } from 'react-redux';
@@ -22,7 +22,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
     useEffect(() => {
         if (!bannerList.length)
             getBannerListDispatch();
-        if(!recommendList.length)
+        if (!recommendList.length)
             getRecommendListDispatch();
     }, [])
 
@@ -35,7 +35,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
             >
                 <div>
                     <Slider bannerList={bannerList}></Slider>
-                    <RecommendList recommendList={recommendList}/>
+                    <RecommendList recommendList={recommendList} />
                 </div>
             </Scroll>
         )
@@ -43,7 +43,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
 
     return (
         <div className='recommend-wrapper'>
-            { enterLoading ? <Loading /> : renderRecommend() }
+            {enterLoading ? <Icon icon='spinner' spin size='4x' /> : renderRecommend()}
         </div>
     )
 }
@@ -54,7 +54,7 @@ interface IStateProps {
     enterLoading: boolean;
 }
 
-interface IDispatchProps{
+interface IDispatchProps {
     getBannerListDispatch: () => void;
     getRecommendListDispatch: () => void;
 }

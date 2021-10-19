@@ -9,8 +9,8 @@ interface HorizenBarItem {
 export interface HorizenBarProps {
     title: string;
     items: HorizenBarItem[];
-    activeItem?: string;
-    handleItemClick: (key: string) => void;
+    activeItem?: HorizenBarItem;
+    handleItemClick: (item: any) => void;
 }
 
 const HorizenBar: React.FC<HorizenBarProps> = (props) => {
@@ -25,11 +25,11 @@ const HorizenBar: React.FC<HorizenBarProps> = (props) => {
         return (
             <div className='horizenbar-scroll'>
                 {
-                    items.map((item, index) => {
-                        const classes = `horizenbar-item ${activeItem === item.key ? 'active' : ''}`;
+                    items.map( item => {
+                        const classes = `horizenbar-item ${activeItem?.key === item.key ? 'active' : ''}`;
 
                         return (
-                            <span className={classes} key={item.key} onClick={() => { handleItemClick(item.key) }}>
+                            <span className={classes} key={item.key} onClick={() => { handleItemClick(item) }}>
                                 {item.name}
                             </span>
                         )
@@ -52,3 +52,4 @@ const HorizenBar: React.FC<HorizenBarProps> = (props) => {
 }
 
 export default HorizenBar;
+

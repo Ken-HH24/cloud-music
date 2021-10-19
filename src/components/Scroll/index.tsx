@@ -129,4 +129,8 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
     )
 })
 
+Scroll.defaultProps = {
+    direction: 'Y'
+}
+
 export default Scroll;

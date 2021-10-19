@@ -1,3 +1,28 @@
 .singers-wrapper {
     width: 100vw;
 }
+
+.singer-list-wrapper {
+    position: fixed;
+    top: 160px;
+    bottom: 0;
+    width: 100vw;
+
+    .singer-item-wrapper {
+        display: flex;
+        align-items: center;
+        background-color: #F2F4F5;
+        border-bottom: 2px solid darken($color: #F2F4F5, $amount: 5);
+
+        .singer-pic {
+            padding: 10px;
+            height: 80px;
+            width: 80px;
+        }
+
+        .singer-name {
+            line-height: 60px;
+            font-size: 15px;
+        }
+    }
+}

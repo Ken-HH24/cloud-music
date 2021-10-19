@@ -1,61 +1,130 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import HorizenBar from '../../components/HorizenBar';
+import Scroll from '../../components/Scroll';
+import { actionCreators } from './store';
+import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
 
-const items = [
-    { name: 'Ken', key: '1' },
-    { name: 'Tom', key: '2' },
-    { name: 'jack', key: '3' },
-    { name: 'Ken', key: '4' },
-    { name: 'Tom', key: '5' },
-    { name: 'jack', key: '6'  },
-    { name: 'Ken', key: '7'  },
-    { name: 'Tom', key: '8'  },
-    { name: 'jack', key: '9'  },
-    { name: 'Ken', key: '10'  },
-    { name: 'Tom', key: '11'  },
-    { name: 'jack', key: '12'  },
-    { name: 'Ken', key: '13'  },
-]
+export type SingersProps = IStateProps & IDispatchProps;
 
-const words = [
-    { name: 'A', key: 'A' },
-    { name: 'B', key: 'B' },
-    { name: 'C', key: 'C' },
-    { name: 'D', key: 'D' },
-    { name: 'E', key: 'E' },
-    { name: 'F', key: 'F' },
-    { name: 'G', key: 'G' },
-    { name: 'H', key: 'H' },
-    { name: 'I', key: 'I' },
-    { name: 'J', key: 'J' },
-    { name: 'K', key: 'K' },
-    { name: 'L', key: 'L' },
-    { name: 'M', key: 'M' },
-    { name: 'N', key: 'N' },
-    { name: 'O', key: 'O' },
-    { name: 'P', key: 'P' },
-    { name: 'Q', key: 'Q' }
-]
+const Singers: React.FC<SingersProps> = (props) => {
+    const {
+        singerTagList,
+        alphaList,
+        singerList,
+        page,
+        pageSize,
+        changeSingerPage,
+        getSingerList,
+        addSingerList
+    } = props;
 
-const Singers: React.FC = (props) => {
-    const [singer, setSinger] = useState('');
-    const [word, setWord] = useState('');
+    const [singerTag, setSingerTag] = useState<SingerTagItem>();
+    const [alpha, setAlpha] = useState<AlphaItem>();
 
-    const handleItemClick = (key: string) => {
-        setSinger(key);
+    useEffect(() => {
+        getSingerList();
+    }, [])
+
+    const handleSingerTagClick = (newSingerTag: SingerTagItem) => {
+        setSingerTag(newSingerTag);
+        getSingerList(newSingerTag, alpha);
+        changeSingerPage(1);
     }
 
-    const handleWordClick = (key: string) => {
-        setWord(key);
+    const handleAlphaClick = (newAlpha: AlphaItem) => {
+        setAlpha(newAlpha);
+        getSingerList(singerTag, newAlpha);
+        changeSingerPage(1);
+    }
+
+    const handlePullUpLoadMore = () => {
+        const offset = page * pageSize;
+        console.log('load more', offset);
+        changeSingerPage(page + 1);
+        addSingerList(singerTag, alpha, offset);
     }
 
     return (
         <div className='singers-wrapper'>
-            <HorizenBar title='singers:' items={items} activeItem={singer} handleItemClick={handleItemClick} />
-            <HorizenBar title='首字母:' items={words} activeItem={word} handleItemClick={handleWordClick} /> 
+            <HorizenBar title='热门:' items={singerTagList} activeItem={singerTag} handleItemClick={handleSingerTagClick} />
+            <HorizenBar title='首字母:' items={alphaList} activeItem={alpha} handleItemClick={handleAlphaClick} />
+            <div className='singer-list-wrapper'>
+                <Scroll
+                    onPullUp={handlePullUpLoadMore}
+                >
+                    <div>
+                        {
+                            singerList.map(singer => {
+                                return (
+                                    <div className='singer-item-wrapper' key={singer.id}>
+                                        <img className='singer-pic' src={singer.picUrl} alt='singer'></img>
+                                        <div className='singer-name'>{singer.name}</div>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </Scroll>
+            </div>
         </div>
     )
 }
 
-export default withRouter(Singers);
+interface IStateProps {
+    singerList: ArtistItem[];
+    alphaList: AlphaItem[];
+    singerTagList: SingerTagItem[];
+    page: number;
+    pageSize: number;
+}
+
+interface IDispatchProps {
+    getSingerList: (singerTag?: SingerTagItem, alpha?: AlphaItem) => void;
+    changeSingerPage: (newPage: number) => void;
+    addSingerList: (singerTag?: SingerTagItem, alpha?: AlphaItem, offset?: number) => void;
+}
+
+const mapStateToProps = (state: any): IStateProps => {
+    return {
+        singerList: state.singers.singerList,
+        alphaList: state.singers.alphaList,
+        singerTagList: state.singers.singerTagList,
+        page: state.singers.page,
+        pageSize: state.singers.pageSize
+    }
+}
+
+const defaultSingerTag: SingerTagItem = {
+    name: '全部',
+    key: '全部',
+    area: '全部',
+    type: '全部'
+}
+
+const defaultAlphaItem: AlphaItem = {
+    name: '-1',
+    key: '-1'
+}
+
+const mapDispatchToProps = (dispatch: any): IDispatchProps => {
+    return {
+        getSingerList(singerTag: SingerTagItem = defaultSingerTag, alpha: AlphaItem = defaultAlphaItem) {
+            const action = actionCreators.getSingerList(singerTag, alpha);
+            dispatch(action);
+        },
+
+        changeSingerPage(newPage: number) {
+            const action = actionCreators.changeSingerPage(newPage);
+            dispatch(action);
+        },
+
+        addSingerList(singerTag: SingerTagItem = defaultSingerTag, alpha: AlphaItem = defaultAlphaItem, offset: number = 0) {
+            const action = actionCreators.getMoreSingerList(singerTag, alpha, offset);
+            dispatch(action);
+        }
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Singers));
