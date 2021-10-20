@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import HorizenBar from '../../components/HorizenBar';
+import getHorizenBar from '../../components/HorizenBar';
 import Scroll from '../../components/Scroll';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
@@ -22,6 +22,9 @@ const Singers: React.FC<SingersProps> = (props) => {
 
     const [singerTag, setSingerTag] = useState<SingerTagItem>();
     const [alpha, setAlpha] = useState<AlphaItem>();
+
+    const HorizenBarSinger = getHorizenBar<SingerTagItem>();
+    const HorizenBarAlpha = getHorizenBar<AlphaItem>();
 
     useEffect(() => {
         getSingerList();
@@ -48,8 +51,8 @@ const Singers: React.FC<SingersProps> = (props) => {
 
     return (
         <div className='singers-wrapper'>
-            <HorizenBar title='热门:' items={singerTagList} activeItem={singerTag} handleItemClick={handleSingerTagClick} />
-            <HorizenBar title='首字母:' items={alphaList} activeItem={alpha} handleItemClick={handleAlphaClick} />
+            <HorizenBarSinger title='热门:' items={singerTagList} activeItem={singerTag} handleItemClick={handleSingerTagClick} />
+            <HorizenBarAlpha title='首字母:' items={alphaList} activeItem={alpha} handleItemClick={handleAlphaClick} />
             <div className='singer-list-wrapper'>
                 <Scroll
                     onPullUp={handlePullUpLoadMore}

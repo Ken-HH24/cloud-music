@@ -6,50 +6,51 @@ interface HorizenBarItem {
     key: string;
 }
 
-export interface HorizenBarProps {
+export interface IHorizenBarProps<T> {
     title: string;
-    items: HorizenBarItem[];
-    activeItem?: HorizenBarItem;
-    handleItemClick: (item: any) => void;
+    items: T[];
+    activeItem?: T;
+    handleItemClick: (item: T) => void;
 }
 
-const HorizenBar: React.FC<HorizenBarProps> = (props) => {
-    const {
-        title,
-        items,
-        activeItem,
-        handleItemClick,
-    } = props;
+const getHorizenBar = <T extends HorizenBarItem>(): React.FC<IHorizenBarProps<T>> => {
+    return (props) => {
+        const {
+            title,
+            items,
+            activeItem,
+            handleItemClick,
+        } = props;
 
-    const renderItem = () => {
+        const renderItem = () => {
+            return (
+                <div className='horizenbar-scroll'>
+                    {
+                        items.map(item => {
+                            const classes = `horizenbar-item ${activeItem?.key === item.key ? 'active' : ''}`;
+
+                            return (
+                                <span className={classes} key={item.key} onClick={() => { handleItemClick(item) }}>
+                                    {item.name}
+                                </span>
+                            )
+                        })
+                    }
+                </div>
+            )
+        }
+
         return (
-            <div className='horizenbar-scroll'>
-                {
-                    items.map( item => {
-                        const classes = `horizenbar-item ${activeItem?.key === item.key ? 'active' : ''}`;
-
-                        return (
-                            <span className={classes} key={item.key} onClick={() => { handleItemClick(item) }}>
-                                {item.name}
-                            </span>
-                        )
-                    })
-                }
+            <div className='horizenbar-wrapper'>
+                <span className='horizenbar-title'>
+                    {title}
+                </span>
+                <Scroll direction='X'>
+                    {renderItem()}
+                </Scroll>
             </div>
         )
     }
-
-    return (
-        <div className='horizenbar-wrapper'>
-            <span className='horizenbar-title'>
-                {title}
-            </span>
-            <Scroll direction='X'>
-                {renderItem()}
-            </Scroll>
-        </div>
-    )
 }
 
-export default HorizenBar;
-
+export default getHorizenBar;
