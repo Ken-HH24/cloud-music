@@ -2,7 +2,7 @@
 
 尝试使用 **React + Typescript** 模仿网易云项目
 
-后台 **api** 使用 https://binaryify.github.io/NeteaseCloudMusicApi/#/，感谢提供者的贡献
+后台 **api** 使用 https://binaryify.github.io/NeteaseCloudMusicApi/#/ ，感谢提供者的贡献
 
 
 
