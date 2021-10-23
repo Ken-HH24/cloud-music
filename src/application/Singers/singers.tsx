@@ -15,29 +15,30 @@ const Singers: React.FC<SingersProps> = (props) => {
         singerTagList,
         alphaList,
         singerList,
+        activeInitial,
+        activeSingerTag,
         page,
         pageSize,
         changeSingerPage,
         getSingerList,
-        addSingerList
+        addSingerList,
+        changeActiveSingerTag,
+        changeInitial
     } = props;
 
-    const [singerTag, setSingerTag] = useState<SingerTagItem>();
-    const [alpha, setAlpha] = useState<AlphaItem>();
-
     useEffect(() => {
-        getSingerList();
+        getSingerList(activeSingerTag, activeInitial);
     }, [])
 
-    const handleSingerTagClick = (newSingerTag: SingerTagItem) => {
-        setSingerTag(newSingerTag);
-        getSingerList(newSingerTag, alpha);
+    const handleSingerTagClick = (key: string) => {
+        getSingerList(key, activeInitial);
+        changeActiveSingerTag(key);
         changeSingerPage(1);
     }
 
-    const handleAlphaClick = (newAlpha: AlphaItem) => {
-        setAlpha(newAlpha);
-        getSingerList(singerTag, newAlpha);
+    const handleAlphaClick = (newAlpha: string) => {
+        getSingerList(activeSingerTag, newAlpha);
+        changeInitial(newAlpha);
         changeSingerPage(1);
     }
 
@@ -45,24 +46,24 @@ const Singers: React.FC<SingersProps> = (props) => {
         const offset = page * pageSize;
         console.log('load more', offset);
         changeSingerPage(page + 1);
-        addSingerList(singerTag, alpha, offset);
+        addSingerList(activeSingerTag, activeInitial, offset);
     }
 
     return (
         <div className='singers-wrapper'>
-            <HorizenBarComponent title='热门：'>
+            <HorizenBarComponent title='热门：' onSelect={handleSingerTagClick}>
                 {
                     singerTagList.map((singerTag, index) => (
-                        <HorizenBarComponent.Item key={index}>
+                        <HorizenBarComponent.Item key={singerTag.key} index={singerTag.key}>
                             {singerTag.name}
                         </HorizenBarComponent.Item>
                     ))
                 }
             </HorizenBarComponent>
-            <HorizenBarComponent title='首字母：'>
+            <HorizenBarComponent title='首字母：' onSelect={handleAlphaClick}>
                 {
                     alphaList.map((alpha, index) => (
-                        <HorizenBarComponent.Item key={index}>
+                        <HorizenBarComponent.Item key={alpha.name} index={alpha.name}>
                             {alpha.name}
                         </HorizenBarComponent.Item>
                     ))
@@ -99,14 +100,18 @@ interface IStateProps {
     singerList: ArtistItem[];
     alphaList: AlphaItem[];
     singerTagList: SingerTagItem[];
+    activeSingerTag: string;
+    activeInitial: string;
     page: number;
     pageSize: number;
 }
 
 interface IDispatchProps {
-    getSingerList: (singerTag?: SingerTagItem, alpha?: AlphaItem) => void;
+    getSingerList: (singerTag: string, alpha: string) => void;
     changeSingerPage: (newPage: number) => void;
-    addSingerList: (singerTag?: SingerTagItem, alpha?: AlphaItem, offset?: number) => void;
+    addSingerList: (singerTag: string, alpha: string, offset?: number) => void;
+    changeActiveSingerTag: (key: string) => void;
+    changeInitial: (initial: string) => void;
 }
 
 const mapStateToProps = (state: any): IStateProps => {
@@ -114,27 +119,17 @@ const mapStateToProps = (state: any): IStateProps => {
         singerList: state.singers.singerList,
         alphaList: state.singers.alphaList,
         singerTagList: state.singers.singerTagList,
+        activeSingerTag: state.singers.activeSingerTag,
+        activeInitial: state.singers.activeInitial,
         page: state.singers.page,
         pageSize: state.singers.pageSize
     }
 }
 
-const defaultSingerTag: SingerTagItem = {
-    name: '全部',
-    key: '全部',
-    area: '全部',
-    type: '全部'
-}
-
-const defaultAlphaItem: AlphaItem = {
-    name: '-1',
-    key: '-1'
-}
-
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
     return {
-        getSingerList(singerTag: SingerTagItem = defaultSingerTag, alpha: AlphaItem = defaultAlphaItem) {
-            const action = actionCreators.getSingerList(singerTag, alpha);
+        getSingerList(key: string, alpha: string) {
+            const action = actionCreators.getSingerList(key, alpha);
             dispatch(action);
         },
 
@@ -143,8 +138,18 @@ const mapDispatchToProps = (dispatch: any): IDispatchProps => {
             dispatch(action);
         },
 
-        addSingerList(singerTag: SingerTagItem = defaultSingerTag, alpha: AlphaItem = defaultAlphaItem, offset: number = 0) {
-            const action = actionCreators.getMoreSingerList(singerTag, alpha, offset);
+        addSingerList(key: string, alpha: string, offset: number = 0) {
+            const action = actionCreators.getMoreSingerList(key, alpha, offset);
+            dispatch(action);
+        },
+
+        changeActiveSingerTag(key: string) {
+            const action = actionCreators.changeActiveSingerTag(key);
+            dispatch(action);
+        },
+
+        changeInitial(initial: string) {
+            const action = actionCreators.changeInitial(initial);
             dispatch(action);
         }
     }

@@ -6,6 +6,8 @@ import { getAlphaList, getTagList } from '../../../api/utils';
 export interface ISingersState {
     singerTagList: SingerTagItem[];
     alphaList: AlphaItem[];
+    activeSingerTag: string;
+    activeInitial: string;
     singerList: ArtistItem[];
     page: number;
     pageSize: number;
@@ -14,6 +16,8 @@ export interface ISingersState {
 const defaultState: ISingersState = {
     singerTagList: getTagList(),
     alphaList: getAlphaList(),
+    activeSingerTag: '',
+    activeInitial: '',
     singerList: [],
     page: 1,
     pageSize: 30
@@ -35,6 +39,16 @@ const singersReducer = (state: ISingersState = defaultState, action: SingersActi
             return {
                 ...state,
                 singerList: [...state.singerList, ...action.data]
+            }
+        case actionTypes.CHANGE_ACTIVE_SINGER_TAG:
+            return {
+                ...state,
+                activeSingerTag: action.data
+            }
+        case actionTypes.CHANGE_INITIAL:
+            return {
+                ...state,
+                activeInitial: action.data
             }
         default:
             return state;

@@ -22,6 +22,6 @@ export const getRecommendListRequest = () => {
     return axiosInstance.get<any, IRecommendResponse>('/personalized');
 }
 
-export const getSingerListRequest = (type: number = -1, area: number = -1, initial: string = '-1', offset: number = 0) => {
+export const getSingerListRequest = (type: string = '-1', area: string = '-1', initial: string = '-1', offset: number = 0) => {
     return axiosInstance.get<any, ISingerList>(`/artist/list?type=${type}&area=${area}&initial=${initial}&offset=${offset}`);
 }

@@ -39,46 +39,49 @@ export const getAlphaList = (): AlphaItem[] => {
     return alphaList;
 }
 
-const typeToNumber: { [T: string]: number } = {
-    '全部': -1,
-    '男歌手': 1,
-    '女歌手': 2,
-    '乐队': 3
+const typeToString: { [T: string]: string } = {
+    '全部': '-1',
+    '男歌手': '1',
+    '女歌手': '2',
+    '乐队': '3'
 }
 
-const areaToNumber: { [T: string]: number } = {
-    '全部': -1,
-    '华语': 7,
-    '欧美': 96,
-    '日本': 8,
-    '韩国': 16,
-    '其他': 0
+const areaToString: { [T: string]: string } = {
+    '全部': '-1',
+    '华语': '7',
+    '欧美': '96',
+    '日本': '8',
+    '韩国': '16',
+    '其他': '0'
 }
 
 const tags: SingerTagItem[] = [];
+const keyToType: { [T: string]: string } = {};
+const keyToArea: { [T: string]: string } = {};
 export const getTagList = (): SingerTagItem[] => {
     if (tags.length) {
         return tags;
     } else {
-        for (const kType of Object.keys(typeToNumber)) {
-            for (const kArea of Object.keys(areaToNumber)) {
+        for (const kType of Object.keys(typeToString)) {
+            for (const kArea of Object.keys(areaToString)) {
                 tags.push({
                     name: kType === kArea ? kType : (kArea + kType),
                     area: kArea,
                     type: kType,
-                    key: kArea + kType
-                })
+                    key: typeToString[kType] + areaToString[kArea]
+                });
+                keyToType[`${typeToString[kType] + areaToString[kArea]}`] = typeToString[kType];
+                keyToArea[`${typeToString[kType] + areaToString[kArea]}`] = areaToString[kArea];
             }
         }
         return tags;
     }
 }
 
-
-export const getTypeByTag = (tag: SingerTagItem): number => {
-    return typeToNumber[tag.type];
+export const getTypeByKey = (key: string): string => {
+    return keyToType[key];
 }
 
-export const getAreaByTag = (tag: SingerTagItem): number => {
-    return areaToNumber[tag.area];
+export const getAreaByKey = (key: string): string => {
+    return keyToArea[key];
 }
