@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import getHorizenBar from '../../components/HorizenBar';
 import Scroll from '../../components/Scroll';
 import Icon from '../../components/Icon';
+import HorizenBarComponent from '../../components/HorizenBar';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
 import LazyLoad, { forceCheck } from 'react-lazyload';
@@ -24,9 +24,6 @@ const Singers: React.FC<SingersProps> = (props) => {
 
     const [singerTag, setSingerTag] = useState<SingerTagItem>();
     const [alpha, setAlpha] = useState<AlphaItem>();
-
-    const HorizenBarSinger = getHorizenBar<SingerTagItem>();
-    const HorizenBarAlpha = getHorizenBar<AlphaItem>();
 
     useEffect(() => {
         getSingerList();
@@ -53,8 +50,24 @@ const Singers: React.FC<SingersProps> = (props) => {
 
     return (
         <div className='singers-wrapper'>
-            <HorizenBarSinger title='热门:' items={singerTagList} activeItem={singerTag} handleItemClick={handleSingerTagClick} />
-            <HorizenBarAlpha title='首字母:' items={alphaList} activeItem={alpha} handleItemClick={handleAlphaClick} />
+            <HorizenBarComponent title='热门：'>
+                {
+                    singerTagList.map((singerTag, index) => (
+                        <HorizenBarComponent.Item key={index}>
+                            {singerTag.name}
+                        </HorizenBarComponent.Item>
+                    ))
+                }
+            </HorizenBarComponent>
+            <HorizenBarComponent title='首字母：'>
+                {
+                    alphaList.map((alpha, index) => (
+                        <HorizenBarComponent.Item key={index}>
+                            {alpha.name}
+                        </HorizenBarComponent.Item>
+                    ))
+                }
+            </HorizenBarComponent>
             <div className='singer-list-wrapper'>
                 <Scroll
                     onPullUp={handlePullUpLoadMore}

@@ -102,7 +102,7 @@ export default withRouter(Home as any);
 - 利用 **useEffect** 对 **bScrool** 进行初始化
 - 另外有时候可能需要通过 **ref** 获得该组件的 **DOM** ，因此使用 **forwardRef** 
 
-```react
+```tsx
 import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import BScroll from '@better-scroll/core';
 import PullDown from '@better-scroll/pull-down';
@@ -542,4 +542,165 @@ export default getHorizenBar;
 
 
 - 想了一下还是使用 **HorizenBar， HorizenBarItem  +  context** 的形式封装好一些，以后再补一下 ... ...
+
+
+
+## 7. Rebuild：HorizenBar
+
+- 根据 **SOC关注点分离原则** ，**HorizenBar** 应该只关注于内部横向 **scroll** 以及 **active** 逻辑的实现，不应该对传入的 **item** 有过多限制
+- 加上仿照 **H5** 的语义化特点，利用 **Context** 把 **HorizenBar** 重构了一次
+
+- **HorizenBar.tsx**
+
+```tsx
+import React, { createContext, CSSProperties, useState } from 'react';
+import Scroll from '../Scroll';
+import { HorizenBarItemProps } from './horizenBarItem';
+
+export interface HorizenBarProps {
+    title?: string
+    style?: CSSProperties
+    defaultActiveIndex?: string;
+    onSelect?: (index: string) => void;
+}
+
+export interface IHorizenBarContext {
+    activeIndex: string;
+    handleItemClick: (index: string) => void;
+}
+
+export const HorizenBarContext = createContext<IHorizenBarContext>({
+    activeIndex: '',
+    handleItemClick: () => { }
+})
+
+const HorizenBar: React.FC<HorizenBarProps> = (props) => {
+    const {
+        title,
+        style,
+        defaultActiveIndex,
+        onSelect,
+        children
+    } = props;
+
+    const [activeIndex, setActiveIndex] = useState(defaultActiveIndex || '');
+
+    const handleItemClick = (index: string) => {
+        onSelect && onSelect(index);
+        setActiveIndex(index);
+    }
+
+    const renderChildren = () => {
+        return React.Children.map(children, (child, i) => {
+            const childrenElement = child as React.FunctionComponentElement<HorizenBarItemProps>;
+            const index = childrenElement.props.index || i.toString();
+            return React.cloneElement(childrenElement, {
+                index
+            })
+        })
+    }
+
+    return (
+        <div className='horizenbar-wrapper' style={style}>
+            {
+                title &&
+                (
+                    <span className='horizenbar-title'>
+                        {title}
+                    </span>
+                )
+            }
+            <Scroll direction='X'>
+                <HorizenBarContext.Provider value={{ activeIndex, handleItemClick }}>
+                    <div className='horizenbar-scroll'>
+                        {renderChildren()}
+                    </div>
+                </HorizenBarContext.Provider>
+            </Scroll>
+        </div>
+    )
+}
+
+export default HorizenBar;
+```
+
+
+
+- **HorizenBarItem.tsx**
+
+```tsx
+import React, { useContext } from 'react';
+import { HorizenBarContext } from './horizenBar';
+
+export interface HorizenBarItemProps {
+    index?: string;
+}
+
+const HorizenBarItem: React.FC<HorizenBarItemProps> = (props) => {
+    const {
+        index,
+        children
+    } = props;
+
+    const horizenBarContext = useContext(HorizenBarContext);
+    const classes = `horizenbar-item ${horizenBarContext.activeIndex === index ? 'active' : ''}`
+
+    const handleItemClick = () => {
+        horizenBarContext.handleItemClick(index || '');
+    }
+
+    return (
+        <div className={classes} onClick={handleItemClick}>
+            {children}
+        </div>
+    )
+}
+
+HorizenBarItem.displayName = 'HorizenBarItem';
+export default HorizenBarItem;
+```
+
+
+
+- 然后在 **index.tsx** 中对组件进行整合
+
+```tsx
+import React from 'react';
+import HorizenBar, { HorizenBarProps } from './horizenBar';
+import HorizenBarItem, { HorizenBarItemProps } from './horizenBarItem';
+
+export type IHorizenComponent = React.FC<HorizenBarProps> & {
+    Item: React.FC<HorizenBarItemProps>
+}
+
+const HorizenBarComponent = HorizenBar as IHorizenComponent;
+HorizenBarComponent.Item = HorizenBarItem
+
+export default HorizenBarComponent;
+```
+
+
+
+- 应用在 **singers.tsx** 中
+
+```tsx
+<HorizenBarComponent title='热门：'>
+    {
+        singerTagList.map((singerTag, index) => (
+            <HorizenBarComponent.Item key={index}>
+                {singerTag.name}
+            </HorizenBarComponent.Item>
+        ))
+    }
+</HorizenBarComponent>
+<HorizenBarComponent title='首字母：'>
+    {
+        alphaList.map((alpha, index) => (
+            <HorizenBarComponent.Item key={index}>
+                {alpha.name}
+            </HorizenBarComponent.Item>
+        ))
+    }
+</HorizenBarComponent>
+```
 
