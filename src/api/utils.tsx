@@ -11,10 +11,26 @@ export const getCount = (count: number): string => {
         return (Math.floor(count / 10000000) / 10).toString() + '亿';
 }
 
+export const debounce = (func: Function | undefined, delay: number) => {
+    if (!func) {
+        return () => { };
+    }
+    let timer: NodeJS.Timeout;
+    return function (...args: any[]) {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+            func.apply(this as any, args);
+            clearTimeout(timer);
+        }, delay);
+    }
+}
+
 export const getAlphaList = (): AlphaItem[] => {
     const wordList = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const alphaList: AlphaItem[] = [];
-    for (const alpha of wordList){
+    for (const alpha of wordList) {
         alphaList.push({
             name: alpha,
             key: alpha

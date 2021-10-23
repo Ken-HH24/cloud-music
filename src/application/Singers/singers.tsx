@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import getHorizenBar from '../../components/HorizenBar';
 import Scroll from '../../components/Scroll';
+import Icon from '../../components/Icon';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
+import LazyLoad, { forceCheck } from 'react-lazyload';
 
 export type SingersProps = IStateProps & IDispatchProps;
 
@@ -56,13 +58,18 @@ const Singers: React.FC<SingersProps> = (props) => {
             <div className='singer-list-wrapper'>
                 <Scroll
                     onPullUp={handlePullUpLoadMore}
+                    onScroll={forceCheck}
+                    pullingDownLoading
+                    pullingUpLoading
                 >
                     <div>
                         {
                             singerList.map(singer => {
                                 return (
                                     <div className='singer-item-wrapper' key={singer.id}>
-                                        <img className='singer-pic' src={singer.picUrl} alt='singer'></img>
+                                        <LazyLoad placeholder={<Icon icon='spinner' spin className='singer-pic' size='1x' />}>
+                                            <img className='singer-pic' src={singer.picUrl} alt='singer' />
+                                        </LazyLoad>
                                         <div className='singer-name'>{singer.name}</div>
                                     </div>
                                 )

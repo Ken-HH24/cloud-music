@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState, forwardRef } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useMemo } from 'react';
 import BScroll from '@better-scroll/core';
 import PullDown from '@better-scroll/pull-down';
 import PullUp from '@better-scroll/pull-up';
 import ObserveDOM from '@better-scroll/observe-dom'
 import { BScrollConstructor } from '@better-scroll/core/dist/types/BScroll';
+import { debounce } from '../../api/utils';
 
 export interface ScrollInterface {
     direction?: 'X' | 'Y';
@@ -11,6 +12,8 @@ export interface ScrollInterface {
     onPullUp?: Function;
     onPullDown?: Function;
     children?: React.ReactNode;
+    pullingDownLoading?: boolean;
+    pullingUpLoading?: boolean;
 }
 
 BScroll.use(ObserveDOM);
@@ -23,7 +26,9 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         onPullUp,
         onScroll,
         onPullDown,
-        children
+        children,
+        pullingDownLoading,
+        pullingUpLoading
     } = props;
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -42,20 +47,24 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
             },
 
             pullDownRefresh: {
-                threshold: 70,
-                stop: 0
+                threshold: 60,
+                stop: 60
             },
 
             pullUpLoad: {
-                threshold: 90,
-                stop: 10
+                threshold: 60,
+                stop: 60
             }
 
         });
         setScrollObj(scroll);
     }
 
-    const pullDown = () => {
+    const pullUpDebounce = useMemo(() => {
+        return debounce(onPullUp, 300);
+    }, [onPullUp])
+
+    const handlePullDown = () => {
         onPullDown && onPullDown();
         setTimeout(() => {
             scrollObj?.finishPullDown();
@@ -63,8 +72,8 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         }, 500);
     }
 
-    const pullUp = async () => {
-        onPullUp && onPullUp();
+    const handlePullUp = async () => {
+        pullUpDebounce && pullUpDebounce();
         setTimeout(() => {
             scrollObj?.finishPullUp();
             scrollObj?.refresh();
@@ -93,10 +102,10 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
     }, [scrollObj, onScroll]);
 
     useEffect(() => {
-        if (!scrollObj || !pullDown) {
+        if (!scrollObj || !handlePullDown) {
             return;
         } else {
-            scrollObj.on('pullingDown', pullDown);
+            scrollObj.on('pullingDown', handlePullDown);
             return () => {
                 scrollObj.off('pullingDown');
             }
@@ -104,10 +113,10 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
     }, [scrollObj, onPullDown]);
 
     useEffect(() => {
-        if (!scrollObj || !pullUp) {
+        if (!scrollObj || !handlePullUp) {
             return;
         } else {
-            scrollObj.on('pullingUp', pullUp);
+            scrollObj.on('pullingUp', handlePullUp);
             return () => {
                 scrollObj.off('pullingUp');
             }
@@ -117,14 +126,19 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
 
     return (
         <div
+            className='scroll-wrapper'
             ref={scrollContainerRef}
-            style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'hidden',
-            }}
         >
-            {children}
+            {
+                direction === 'X' ? children
+                    : (
+                        <div>
+                            {pullingDownLoading && <div className='pullDown-wrapper'>Loading ... ...</div>}
+                            {children}
+                            {pullingUpLoading && <div className='pullUp-wrapper'>Loading ... ...</div>}
+                        </div>
+                    )
+            }
         </div>
     )
 })
