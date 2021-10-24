@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { getSingerListRequest } from '../../../api/request';
 import { getTypeByKey, getAreaByKey } from '../../../api/utils';
 import * as actionTypes from './constants';
-import { AlphaItem, ArtistItem, SingerTagItem } from './types';
+import { ArtistItem } from './types';
 
 interface IChangeSingerListAction {
     type: actionTypes.CHANGE_SINGER_LIST;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Scroll from '../../components/Scroll';
@@ -7,6 +7,7 @@ import HorizenBarComponent from '../../components/HorizenBar';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
 import LazyLoad, { forceCheck } from 'react-lazyload';
+import ImageLoader from '../../components/ImageLoader';
 
 export type SingersProps = IStateProps & IDispatchProps;
 
@@ -81,9 +82,7 @@ const Singers: React.FC<SingersProps> = (props) => {
                             singerList.map(singer => {
                                 return (
                                     <div className='singer-item-wrapper' key={singer.id}>
-                                        <LazyLoad placeholder={<Icon icon='spinner' spin className='singer-pic' size='1x' />}>
-                                            <img className='singer-pic' src={singer.picUrl} alt='singer' />
-                                        </LazyLoad>
+                                        <ImageLoader className='singer-pic' src={singer.picUrl} />
                                         <div className='singer-name'>{singer.name}</div>
                                     </div>
                                 )
