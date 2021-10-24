@@ -1,0 +1,2 @@
+export const CHANGE_RANK_LIST = 'rank/CHANGE_RANK_LIST';
+export type CHANGE_RANK_LIST = typeof CHANGE_RANK_LIST

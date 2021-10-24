@@ -3,6 +3,7 @@ import { Redirect } from 'react-router';
 import Home from '../application/Home';
 import Recommend from '../application/Recommend';
 import Singers from '../application/Singers';
+import Rank from '../application/Rank';
 
 const routeConfig: RouteConfig[] = [
     {
@@ -23,6 +24,10 @@ const routeConfig: RouteConfig[] = [
             {
                 path: '/singers',
                 component: Singers
+            },
+            {
+                path: '/rank',
+                component: Rank
             }
         ]
     }

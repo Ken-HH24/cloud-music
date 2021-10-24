@@ -1,3 +1,4 @@
+import { RankItem } from '../application/Rank/store/types';
 import { SingerTagItem, AlphaItem } from '../application/Singers/store/types';
 
 export const getCount = (count: number): string => {
@@ -84,4 +85,15 @@ export const getTypeByKey = (key: string): string => {
 
 export const getAreaByKey = (key: string): string => {
     return keyToArea[key];
+}
+
+export const splitRankListIndex = (rankList: RankItem[]): number => {
+    let index = rankList.length;
+    for (let i = 0; i < rankList.length; i++) {
+        if (rankList[i].tracks.length === 0) {
+            index = i;
+            break;
+        }
+    }
+    return index;
 }

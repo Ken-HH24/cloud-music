@@ -1,0 +1,92 @@
+.rank-wrapper {
+    background: #f2f4f5;
+    position: fixed;
+    top: 86px;
+    bottom: 0;
+
+    .official-list-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        & > span {
+            font-weight: 700;
+            font-size: 15px;
+            padding: 10px 0 10px 10px;
+        }
+
+        .official-list-container {
+            display: flex;
+            flex-direction: column;
+
+            .official-list-item {
+                display: flex;
+                flex-direction: row;
+                box-sizing: border-box;
+                padding-bottom: 5px;
+                margin-bottom: 5px;
+                border-bottom: 1px solid #eaeaea;
+
+                .official-list-item-img {
+                    margin-left: 10px;
+                    width: 110px;
+                    height: 110px;
+                    border-radius: 5px;
+                    box-shadow: 0 0 5px #34495e;
+                }
+
+                .official-list-item-info {
+                    padding-left: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+
+                    & > span {
+                        font-size: 13px;
+                        padding-top: 5px;
+                        padding-bottom: 5px;
+                        text-indent: -2em;
+                        margin-left: 3em;
+                        color: #7f8c8d;
+                    }
+                }
+            }
+        }
+    }
+
+    .global-list-wrapper {
+        margin-top: 10px;
+
+        & > span {
+            font-weight: 700;
+            font-size: 15px;
+            padding: 10px 0 10px 10px;
+        }
+
+        .global-list-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            .global-list-item {
+                display: flex;
+                justify-content: center;
+                margin-top: 5px;
+                margin-bottom: 5px;
+                position: relative;
+
+                .global-list-item-img {
+                    width: 125px;
+                    height: 125px;
+                    border-radius: 5px;
+                }
+
+                .global-list-item-update {
+                    position: absolute;
+                    left: 10px;
+                    bottom: 0;
+                    color: #eaeaea;
+                }
+            }
+        }
+    }
+}

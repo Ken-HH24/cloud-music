@@ -37,7 +37,18 @@ const ImageLoader: React.FC<ImageLoaderProps> = (props) => {
                 />
             }
             {
-                (isVisible && !isLoaded) && <Icon icon='spinner' spin className={className} style={style} />
+                (isVisible && !isLoaded) &&
+                <Icon
+                    icon='spinner'
+                    className={className}
+                    style={{
+                        boxShadow: 'none',
+                        border: 'none',
+                        ...style
+                    }}
+                    spin
+                    size='1x'
+                />
             }
         </div>
     )
