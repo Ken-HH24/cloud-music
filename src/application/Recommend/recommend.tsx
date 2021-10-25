@@ -3,6 +3,7 @@ import { withRouter } from 'react-router';
 import Slider from '../../components/Slider';
 import Scroll from '../../components/Scroll';
 import Icon from '../../components/Icon';
+import Loading from '../../components/Loading';
 import RecommendList from '../../components/RecommendList';
 import { RecommendTypes, actionCreators } from './store';
 import { connect } from 'react-redux';
@@ -43,7 +44,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
 
     return (
         <div className='recommend-wrapper'>
-            {enterLoading ? <Icon icon='spinner' spin size='4x' /> : renderRecommend()}
+            {enterLoading ? <Loading style={{ height: '100%' }} /> : renderRecommend()}
         </div>
     )
 }

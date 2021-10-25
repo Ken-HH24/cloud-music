@@ -52,7 +52,7 @@ const Singers: React.FC<SingersProps> = (props) => {
 
     return (
         <div className='singers-wrapper'>
-            <HorizenBarComponent title='热门：' onSelect={handleSingerTagClick}>
+            <HorizenBarComponent defaultActiveIndex={activeSingerTag} title='热门：' onSelect={handleSingerTagClick}>
                 {
                     singerTagList.map((singerTag, index) => (
                         <HorizenBarComponent.Item key={singerTag.key} index={singerTag.key}>
@@ -61,7 +61,7 @@ const Singers: React.FC<SingersProps> = (props) => {
                     ))
                 }
             </HorizenBarComponent>
-            <HorizenBarComponent title='首字母：' onSelect={handleAlphaClick}>
+            <HorizenBarComponent defaultActiveIndex={activeInitial} title='首字母：' onSelect={handleAlphaClick}>
                 {
                     alphaList.map((alpha, index) => (
                         <HorizenBarComponent.Item key={alpha.name} index={alpha.name}>

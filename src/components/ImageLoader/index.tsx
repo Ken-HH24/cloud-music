@@ -1,6 +1,7 @@
 import React, { CSSProperties, ImgHTMLAttributes, useRef, useState } from 'react';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import Icon from '../Icon';
+import Loading from '../Loading';
 
 export interface ImageLoaderProps extends ImgHTMLAttributes<HTMLImageElement> {
     className?: string
@@ -38,17 +39,18 @@ const ImageLoader: React.FC<ImageLoaderProps> = (props) => {
             }
             {
                 (isVisible && !isLoaded) &&
-                <Icon
-                    icon='spinner'
-                    className={className}
-                    style={{
-                        boxShadow: 'none',
-                        border: 'none',
-                        ...style
-                    }}
-                    spin
-                    size='1x'
-                />
+                // <Icon
+                //     icon='spinner'
+                //     className={className}
+                //     style={{
+                //         boxShadow: 'none',
+                //         border: 'none',
+                //         ...style
+                //     }}
+                //     spin
+                //     size='1x'
+                // />
+                <Loading className={className} />
             }
         </div>
     )
