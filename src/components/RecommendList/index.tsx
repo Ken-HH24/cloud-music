@@ -1,16 +1,21 @@
 import React from 'react';
 import { RecommendTypes } from '../../application/Recommend/store';
-import Icon from '../Icon/index'
 import LazyLoad from 'react-lazyload';
 import { getCount } from '../../api/utils';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export interface RecommendListPorps {
+export interface RecommendListPorps extends RouteComponentProps {
     recommendList?: RecommendTypes.RecommendItem[];
 }
 
 const RecommendList: React.FC<RecommendListPorps> = (props) => {
     const { recommendList } = props;
-    
+
+    const enterDetail = (id: number) => {
+        props.history.push(`/recommend/${id}`)
+    }
+
     return (
         <div className='recommend-list-wrapper'>
             <h1 className='recommend-list-title'>
@@ -20,9 +25,13 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
                 {
                     (recommendList || []).map((recommendItem, index) => {
                         return (
-                            <div className='recommend-item-wrapper' key={index}>
+                            <div
+                                className='recommend-item-wrapper'
+                                key={index}
+                                onClick={() => { enterDetail(recommendItem.id) }}
+                            >
                                 <div className='recommend-item-img-wrapper'>
-                                    <LazyLoad placeholder={<Icon icon='spinner' spin />}>
+                                    <LazyLoad placeholder={<FontAwesomeIcon icon='spinner' spin />}>
                                         <img
                                             className='recommend-item-img'
                                             src={recommendItem.picUrl}
@@ -30,7 +39,7 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
                                         ></img>
                                     </LazyLoad>
                                     <div className='recommend-item-info'>
-                                        <Icon icon='headphones-alt' />
+                                        <FontAwesomeIcon icon='headphones-alt' />
                                         <span className='recommend-item-count'>
                                             {getCount(recommendItem.playCount)}
                                         </span>
@@ -41,7 +50,7 @@ const RecommendList: React.FC<RecommendListPorps> = (props) => {
                                 </div>
                             </div>
                         )
-                        
+
                     })
                 }
             </div>
@@ -53,4 +62,4 @@ RecommendList.defaultProps = {
     recommendList: []
 }
 
-export default RecommendList;
+export default withRouter(RecommendList);

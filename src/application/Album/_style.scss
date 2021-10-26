@@ -1,0 +1,33 @@
+.album-wrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+}
+
+.fly-enter,
+.fly-appear {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.fly-enter-active,
+.fly-appear-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: 0.3s;
+}
+
+.fly-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fly-exit-active {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: 0.3s;
+}

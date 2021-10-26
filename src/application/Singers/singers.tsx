@@ -2,11 +2,9 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Scroll from '../../components/Scroll';
-import Icon from '../../components/Icon';
 import HorizenBarComponent from '../../components/HorizenBar';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
-import LazyLoad, { forceCheck } from 'react-lazyload';
 import ImageLoader from '../../components/ImageLoader';
 
 export type SingersProps = IStateProps & IDispatchProps;
@@ -54,7 +52,7 @@ const Singers: React.FC<SingersProps> = (props) => {
         <div className='singers-wrapper'>
             <HorizenBarComponent defaultActiveIndex={activeSingerTag} title='热门：' onSelect={handleSingerTagClick}>
                 {
-                    singerTagList.map((singerTag, index) => (
+                    singerTagList.map(singerTag => (
                         <HorizenBarComponent.Item key={singerTag.key} index={singerTag.key}>
                             {singerTag.name}
                         </HorizenBarComponent.Item>
@@ -63,7 +61,7 @@ const Singers: React.FC<SingersProps> = (props) => {
             </HorizenBarComponent>
             <HorizenBarComponent defaultActiveIndex={activeInitial} title='首字母：' onSelect={handleAlphaClick}>
                 {
-                    alphaList.map((alpha, index) => (
+                    alphaList.map(alpha => (
                         <HorizenBarComponent.Item key={alpha.name} index={alpha.name}>
                             {alpha.name}
                         </HorizenBarComponent.Item>
@@ -73,7 +71,6 @@ const Singers: React.FC<SingersProps> = (props) => {
             <div className='singer-list-wrapper'>
                 <Scroll
                     onPullUp={handlePullUpLoadMore}
-                    onScroll={forceCheck}
                     pullingDownLoading
                     pullingUpLoading
                 >

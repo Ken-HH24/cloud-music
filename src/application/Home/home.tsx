@@ -4,8 +4,7 @@ import { RouteConfigComponentProps, renderRoutes } from 'react-router-config'
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface HomeProps extends RouteConfigComponentProps {
-}
+interface HomeProps extends RouteConfigComponentProps { }
 
 const Home: React.FC<HomeProps> = (props) => {
     const { route } = props;
@@ -38,4 +37,4 @@ const Home: React.FC<HomeProps> = (props) => {
     )
 }
 
-export default withRouter(Home as any);
+export default withRouter(Home);

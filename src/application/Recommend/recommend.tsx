@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { withRouter } from 'react-router';
 import Slider from '../../components/Slider';
 import Scroll from '../../components/Scroll';
-import Icon from '../../components/Icon';
 import Loading from '../../components/Loading';
 import RecommendList from '../../components/RecommendList';
 import { RecommendTypes, actionCreators } from './store';
 import { connect } from 'react-redux';
 import { forceCheck } from 'react-lazyload';
+import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
 
-export type RecommendProps = IStateProps & IDispatchProps;
+export type RecommendProps = IStateProps & IDispatchProps & RouteConfigComponentProps
 
 const Recommend: React.FC<RecommendProps> = (props) => {
     const {
@@ -25,13 +25,13 @@ const Recommend: React.FC<RecommendProps> = (props) => {
             getBannerListDispatch();
         if (!recommendList.length)
             getRecommendListDispatch();
+        console.log(renderRoutes(props.route?.routes))
     }, [])
 
+    
     const renderRecommend = () => {
         return (
             <Scroll
-                onPullDown={() => { console.log('pulling down') }}
-                onPullUp={() => { console.log('pulling up') }}
                 onScroll={() => { forceCheck() }}
             >
                 <div>
@@ -45,6 +45,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
     return (
         <div className='recommend-wrapper'>
             {enterLoading ? <Loading style={{ height: '100%' }} /> : renderRecommend()}
+            {renderRoutes(props.route?.routes)}
         </div>
     )
 }
