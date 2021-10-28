@@ -28,7 +28,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
         console.log(renderRoutes(props.route?.routes))
     }, [])
 
-    
+
     const renderRecommend = () => {
         return (
             <Scroll
