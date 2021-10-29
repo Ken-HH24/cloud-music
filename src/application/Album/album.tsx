@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header';
 import Scroll from '../../components/Scroll';
@@ -13,10 +13,8 @@ interface AlbumUrlParms {
     id: string
 }
 
-export interface AlbumProps extends RouteConfigComponentProps<AlbumUrlParms> {
-    playList: AlbumTypes.PlayListItem
-    getPlaylist: (id: string) => void
-}
+// export interface AlbumProps extends RouteConfigComponentProps<AlbumUrlParms>, IStateProps, IDispatchProps { }
+export type AlbumProps = RouteConfigComponentProps<AlbumUrlParms> & IStateProps & IDispatchProps;
 
 const Album: React.FC<AlbumProps> = (props) => {
     const { playList, getPlaylist } = props;

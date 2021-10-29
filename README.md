@@ -704,3 +704,304 @@ export default HorizenBarComponent;
 </HorizenBarComponent>
 ```
 
+## 8. IntersectionObserver
+
+- 之前的图片懒加载一直都是使用 **window.innerHeight** 等 **api** 来实现，但其实浏览器里面有一个 **IntersectionObserver** 对象也可以帮助实时监测对象是否处于可视范围内
+- 利用 **hooks** 的特性，设计一个 **useIntersectionObserver** ，传入一个 **DOM** 的 **ref** 对象和 **option** ，**option** 里面有一个 **onIntersect** 的回调函数，当监听元素可见的时候会执行该回调函数
+
+```tsx
+import React, { useEffect } from 'react';
+
+interface IIntersectionOption {
+    onIntersect: IntersectionObserverCallback;
+    thresold?: number;
+    rootMargin?: string;
+}
+
+export const useIntersectionObserver = (ref: React.RefObject<HTMLElement | HTMLImageElement>, option: IIntersectionOption) => {
+    useEffect(() => {
+        const observer = new IntersectionObserver(option.onIntersect, {
+            ...option
+        });
+        const current = ref.current;
+        if (current) {
+            observer.observe(current);
+        }
+        return () => {
+            if (current)
+                observer.unobserve(current);
+        }
+    })
+}
+
+export default useIntersectionObserver;
+```
+
+
+
+- 然后利用该 **hooks** 解决图片懒加载以及加载卡顿的情况
+- 定义两个状态 **isVisible** 和 **isLoaded** ，分别是图片是否可见和是否加载成功
+- 然后利用 **useIntersectionObserver** 对图片 **ref** 对象进行监听，当可见时执行 **setIsVisible(true)** ，然后取消订阅
+- 另外还要在 **img** 标签中注册 **onLoaded** 的事件监听，只有成功加载的时候，才完整显示图片
+
+```tsx
+import React, { CSSProperties, ImgHTMLAttributes, useRef, useState } from 'react';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
+import Icon from '../Icon';
+import Loading from '../Loading';
+
+export interface ImageLoaderProps extends ImgHTMLAttributes<HTMLImageElement> {
+    className?: string
+    style?: CSSProperties
+}
+
+const ImageLoader: React.FC<ImageLoaderProps> = (props) => {
+    const { className, style, ...restProps } = props;
+    const [isVisible, setIsVisible] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef<HTMLDivElement>(null);
+
+    useIntersectionObserver(imgRef, {
+        onIntersect: (entries, observerElement) => {
+            if (entries[0].isIntersecting) {
+                setIsVisible(true);
+                observerElement.unobserve(imgRef.current!);
+            }
+        }
+    })
+
+    return (
+        <div ref={imgRef}>
+            {
+                isVisible && <img
+                    alt='img'
+                    className={className}
+                    onLoad={() => { setIsLoaded(true) }}
+                    style={{
+                        ...style,
+                        display: `${isLoaded ? '' : 'none'}`
+                    }}
+                    {...restProps}
+                />
+            }
+            {
+                (isVisible && !isLoaded) &&
+                <Loading className={className} />
+            }
+        </div>
+    )
+}
+
+export default ImageLoader;
+```
+
+
+
+
+
+## 9. animation & 路由跳转
+
+- 在处理完首页的三个 **page** 后，继续完成点击某个 **Album** 进入 **playlist** 的工作
+- 对应的路由为 **recommend/:id** ，处于 **Recommend** 组件之下
+
+```tsx
+import { RouteConfig } from "react-router-config";
+import { Redirect } from 'react-router';
+import Home from '../application/Home';
+import Recommend from '../application/Recommend';
+import Singers from '../application/Singers';
+import Rank from '../application/Rank';
+import Album from '../application/Album';
+
+const routeConfig: RouteConfig[] = [
+    {
+        path: '/',
+        component: Home,
+        routes: [
+        	... ...
+            {
+                path: '/recommend',
+                component: Recommend,
+                routes: [
+                    {
+                        path: '/recommend/:id',
+                        component: Album
+                    }
+                ]
+            },
+        ]
+    }
+]
+
+export default routeConfig;
+```
+
+
+
+- 对于 **Album** 组件的渲染可以在 **Recommend** 组件下添加 **renderRoutes** 实现
+
+```tsx
+<div className='recommend-wrapper'>
+    {enterLoading ? <Loading style={{ height: '100%' }} /> : renderRecommend()}
+    {renderRoutes(props.route?.routes)}
+</div>
+```
+
+
+
+- **Album** 页面的编写不再赘述，主要重点是对于切入切出动画的处理，利用 **react-transition-group** 可以轻易实现
+- 但是在切换的过程中不会引起路由的变化，所以需要在动画结束后的钩子函数 **onExited** 中执行 **props.history.goback()** 主动返回
+
+```tsx
+<CSSTransition
+    in={showStatus}
+    timeout={300}
+    appear={true}
+    unmountOnExit
+    classNames='fly'
+    onExited={props.history.goBack}
+    >
+    <div className='album-wrapper'>
+        <Header ref={headerRef} title={playList.name} isMarquee={isMarquee} handleBack={() => { setShowStatus(false) }} />
+        <div className='album-content'>
+            <Scroll onScroll={handleScroll}>
+                {renderDesc()}
+                {renderSongList()}
+            </Scroll>
+        </div>
+    </div>
+</CSSTransition>
+```
+
+
+
+
+
+## 10. Marquee Header
+
+- 在旧版本的 **HTML** 标签中有 **\<marquee\>** 这个标签实现跑马灯的效果，但是现在已经废弃了
+- 因此在 **Header** 组件中可以自己去实现一个这样的效果，用 **div** 包裹一层 **span** ，然后添加动画从 **left: 100%** 位移到 **left: -100%** 
+
+```scss
+.header-marquee {
+    width: 100%;
+    height: 100%;
+    margin-left: 40px;
+    overflow: hidden;
+    position: relative;
+    padding-top: 0;
+
+    & > span {
+        line-height: 40px;
+        font-size: 20px;
+        top: 0;
+        color: white;
+        position: absolute;
+        animation: marquee 10s linear infinite;
+    }
+}
+
+@keyframes marquee {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: -100%;
+    }
+}
+```
+
+
+
+- 另外该效果应该在用户向下滑动的时候才逐步呈现，此时可以利用封装好的 **Scroll** 组件中的 **onScroll** 钩子函数进行实现
+- 通过回调函数的 **pos** 来主动控制 **Header** 的背景透明度以及 **marquee** 动画效果
+- 还有一个关键的点是需要直接操作 **DOM** 元素的 **style** ，因此 **Header** 不能是 **FC** 组件，需要通过 **forwardRef** 来对 **ref** 进行转发
+
+```tsx
+const handleScroll = (pos: any) => {
+    const minScrollY = -40;
+    const percent = Math.abs(pos.y / minScrollY);
+    const headerDOM = headerRef.current!;
+    console.log(pos, percent);
+    if (pos.y < minScrollY) {
+        headerDOM.style.backgroundColor = '#e74c3c';
+        headerDOM.style.opacity = Math.min(1, (percent - 1) / 2).toString();
+        setIsMarquee(true);
+
+    } else {
+        headerDOM.style.backgroundColor = '';
+        headerDOM.style.opacity = '1';
+        setIsMarquee(false);
+    }
+}
+```
+
+
+
+## 11. RouteConfigComponentProps
+
+- 处理 **Album** 组件还有另外一个问题，因为 **url** 中有 **id** 这个动态属性，获取该信息的手段有两种，一种是利用 **hooks** 中的 **useParms** ，另外是使用 **props.match.params** ，后者的使用前提是该组件被 **withRouter** 函数处理过
+- 在这里因为 **Header** 已经使用了 **props.history** 等 **api** 了，为了保持一致性，所以使用上述方法的后者
+- 但是这里 **withRouter** 方法的泛型处理有一些麻烦，先看定义
+
+```tsx
+export function withRouter<P extends RouteComponentProps<any>, C extends React.ComponentType<P>>(
+    component: C & React.ComponentType<P>,
+): React.ComponentClass<Omit<P, keyof RouteComponentProps<any>> & WithRouterProps<C>> & WithRouterStatics<C>;
+
+export interface RouteComponentProps<
+    Params extends { [K in keyof Params]?: string } = {},
+    C extends StaticContext = StaticContext,
+    S = H.LocationState
+> {
+    history: H.History<S>;
+    location: H.Location<S>;
+    match: match<Params>;
+    staticContext?: C | undefined;
+}
+```
+
+
+
+- **withRouter** 需要接收两个泛型参数，一个约定有关 **route** 的信息，另外一个约束组件
+- 而 **RouteComponentProps** 中泛型接收三个，在这里我们需要定义第一个 **Parmas** ，也就是 **url** 中的参数
+- 所以最容易想到的做法就是第一个泛型传入 **RouteComponentProps\<AlbumUrlParmas\>** ，然后第二个传入 **React.FC\<AlbumProps\>**
+- 但是这里会报错，因为 **withRouter** 的定义中 `withRouter<P extends RouteComponentProps<any>, C extends React.ComponentType<P>>` C 需要继承以 P 为 **props** 的 **React.ComponentType** ，在这里组件显然不继承于 **React.Component<RouteComponentProps\<AlbumUrlParmas\>>** 
+- 解决方法就是直接定义 **AlbumProps** 继承于 **RouteComponentProps\<AlbumUrlParmas\>** ，然后在 **withRouter** 的第一个泛型参数中直接传入 **AlbumProps** 
+
+```tsx
+interface AlbumUrlParms {
+    id: string
+}
+
+interface AlbumProps extends RouteComponentProps<AlbumUrlParmas> {}
+    
+export default withRouter<AlbumProps, React.FC<AlbumProps>>(Album);
+```
+
+
+
+- 但是还没有完成定义，因为当前这个 **AlbumProps** 不可扩展了，后面与 **redux** 配合使用的时候，还有很多存在于 **props** 的数据
+- 解决方法是定义完 **store** 中的数据结构后，使用 **type** 关键字进行联合
+- 最后还有因为使用了 **react-router-config** 这个库，所以需要把 **RouteComponentProps** 更换为 **RouteConfigComponentProps**
+
+```tsx
+interface AlbumUrlParms {
+    id: string
+}
+
+export type AlbumProps = RouteConfigComponentProps<AlbumUrlParms> & IStateProps & IDispatchProps;
+
+interface IStateProps {
+    playList: AlbumTypes.PlayListItem
+}
+
+interface IDispatchProps {
+    getPlaylist: (id: string) => void
+}
+
+
+export default withRouter<AlbumProps, React.FC<AlbumProps>>(connect(mapStateToProps, mapDispatchToProps)(Album));
+```
+
