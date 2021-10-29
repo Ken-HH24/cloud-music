@@ -4,7 +4,7 @@ import PullDown from '@better-scroll/pull-down';
 import PullUp from '@better-scroll/pull-up';
 import ObserveDOM from '@better-scroll/observe-dom'
 import { BScrollConstructor } from '@better-scroll/core/dist/types/BScroll';
-import { debounce } from '../../api/utils';
+import { debounce, throttle } from '../../api/utils';
 
 export interface ScrollInterface {
     direction?: 'X' | 'Y';
@@ -64,6 +64,10 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         return debounce(onPullUp, 300);
     }, [onPullUp])
 
+    const scrollThrottle = useMemo(() => {
+        return throttle(onScroll, 100);
+    }, [onScroll]);
+
     const handlePullDown = () => {
         onPullDown && onPullDown();
         setTimeout(() => {
@@ -88,18 +92,18 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
     }, []);
 
     useEffect(() => {
-        if (!scrollObj || !onScroll) {
+        if (!scrollObj || !scrollThrottle) {
             return;
         } else {
-            scrollObj.on('scroll', (scroll: Event) => {
-                onScroll(scroll);
+            scrollObj.on('scroll', (scrollEvent: Event) => {
+                scrollThrottle(scrollEvent)
             });
 
             return () => {
                 scrollObj.off('scroll');
             }
         }
-    }, [scrollObj, onScroll]);
+    }, [scrollObj, scrollThrottle]);
 
     useEffect(() => {
         if (!scrollObj || !handlePullDown) {

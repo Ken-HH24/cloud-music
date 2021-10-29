@@ -30,7 +30,6 @@ const Rank: React.FC<RankProps> = (props) => {
     }, [rankList])
 
     const renderOfficialList = () => {
-        console.log('official', officialList)
         return (
             <div className='official-list-wrapper'>
                 <span>官方榜</span>

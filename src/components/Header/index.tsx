@@ -13,7 +13,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>((props, ref) => {
         <div className='header-wrapper' ref={ref}>
             <FontAwesomeIcon icon='arrow-left' className='header-back' onClick={handleBack} />
             {
-                isMarquee ? <div className='header-marquee'><span>hello</span></div>
+                isMarquee ? <div className='header-marquee'><span>{title}</span></div>
                     : <span className='header-title'>{title}</span>
             }
         </div>

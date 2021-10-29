@@ -28,6 +28,23 @@ export const debounce = (func: Function | undefined, delay: number) => {
     }
 }
 
+export const throttle = (func: Function | undefined, delay: number) => {
+    if (!func) {
+        return () => { };
+    }
+    let timer: NodeJS.Timeout | null;
+    return function (...args: any[]) {
+        if (timer) {
+            return null;
+        } else {
+            timer = setTimeout(() => {
+                timer = null;
+                func.apply(this as any, args);
+            }, delay);
+        }
+    }
+}
+
 export const getAlphaList = (): AlphaItem[] => {
     const wordList = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const alphaList: AlphaItem[] = [];

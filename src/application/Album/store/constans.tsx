@@ -1,0 +1,2 @@
+export const CHANGE_PLAYLIST = 'album/CHANGE_PLAYLIST';
+export type CHANGE_PLAYLIST = typeof CHANGE_PLAYLIST;

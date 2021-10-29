@@ -1,26 +1,44 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header';
 import Scroll from '../../components/Scroll';
+import { AlbumTypes } from './store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getPlaylist } from './store/actionCreators';
+import { connect } from 'react-redux';
+import { RouteConfigComponentProps } from 'react-router-config';
 
-export type AlbumProps = RouteComponentProps
+interface AlbumUrlParms {
+    id: string
+}
+
+export interface AlbumProps extends RouteConfigComponentProps<AlbumUrlParms> {
+    playList: AlbumTypes.PlayListItem
+    getPlaylist: (id: string) => void
+}
 
 const Album: React.FC<AlbumProps> = (props) => {
+    const { playList, getPlaylist } = props;
+    const { id } = props.match.params;
+
     const [showStatus, setShowStatus] = useState(true);
     const [isMarquee, setIsMarquee] = useState(false);
     const headerRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        getPlaylist(id);
+    }, [])
+
     const renderDesc = () => {
         return (
             <div className='desc-wrapper'>
-                <div className='album-bg' style={{ backgroundImage: "url('http://p2.music.126.net/ecpXnH13-0QWpWQmqlR0gw==/109951164354856816.jpg')" }} />
+                <div className='album-bg' style={{ backgroundImage: `url(${playList.coverImgUrl})` }} />
                 <div className='album-desc'>
-                    <img className='album-cover' alt='cover' src='http://p2.music.126.net/ecpXnH13-0QWpWQmqlR0gw==/109951164354856816.jpg' />
+                    <img className='album-cover' alt='cover' src={playList.coverImgUrl} />
                     <div>
-                        <span className='album-title'>title</span>
-                        <span className='album-author'>author</span>
+                        <span className='album-title'>{playList.name}</span>
+                        <span className='album-author'>{playList.description}</span>
                     </div>
                 </div>
                 <div className='menu-wrapper'>
@@ -46,15 +64,7 @@ const Album: React.FC<AlbumProps> = (props) => {
     }
 
     const renderSongList = () => {
-        const songItem = {
-            name: 'Hello world',
-            author: 'your father'
-        }
-
-        const songList = [];
-        for (let i = 0; i < 20; i++) {
-            songList.push(songItem);
-        }
+        const tracks = playList.tracks;
 
         return (
             <div className='song-list-wrapper'>
@@ -70,12 +80,12 @@ const Album: React.FC<AlbumProps> = (props) => {
                 </div>
                 <div className='song-list-container'>
                     {
-                        songList.map((song, index) => (
-                            <div className='song-item' key={index}>
+                        tracks.map((track, index) => (
+                            <div className='song-item' key={track.id}>
                                 <span>{index + 1}</span>
                                 <div className='song-info'>
-                                    <span className='song-name'>{song.name}</span>
-                                    <span className='song-singer'>{song.author}</span>
+                                    <span className='song-name'>{track.name}</span>
+                                    <span className='song-singer'>{track.ar[0].name}</span>
                                 </div>
                             </div>
                         ))
@@ -112,7 +122,7 @@ const Album: React.FC<AlbumProps> = (props) => {
             onExited={props.history.goBack}
         >
             <div className='album-wrapper'>
-                <Header ref={headerRef} title='Album' isMarquee={isMarquee} handleBack={() => { setShowStatus(false) }} />
+                <Header ref={headerRef} title={playList.name} isMarquee={isMarquee} handleBack={() => { setShowStatus(false) }} />
                 <div className='album-content'>
                     <Scroll onScroll={handleScroll}>
                         {renderDesc()}
@@ -124,4 +134,27 @@ const Album: React.FC<AlbumProps> = (props) => {
     )
 }
 
-export default withRouter(React.memo(Album));
+interface IStateProps {
+    playList: AlbumTypes.PlayListItem
+}
+
+interface IDispatchProps {
+    getPlaylist: (id: string) => void
+}
+
+const mapStateToProps = (state: any): IStateProps => {
+    return {
+        playList: state.album.playList
+    }
+}
+
+const mapDispatchToProps = (dispatch: any): IDispatchProps => {
+    return {
+        getPlaylist(id: string) {
+            const action = getPlaylist(id);
+            dispatch(action)
+        }
+    }
+}
+
+export default withRouter<AlbumProps, React.FC<AlbumProps>>(connect(mapStateToProps, mapDispatchToProps)(Album));
