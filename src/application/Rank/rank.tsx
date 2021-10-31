@@ -5,8 +5,10 @@ import { connect } from 'react-redux';
 import { splitRankListIndex } from '../../api/utils';
 import ImageLoader from '../../components/ImageLoader';
 import Scroll from '../../components/Scroll';
+import { withRouter } from 'react-router';
+import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
 
-export type RankProps = IStateProps & IDispatchProps;
+export type RankProps = RouteConfigComponentProps & IStateProps & IDispatchProps;
 
 const Rank: React.FC<RankProps> = (props) => {
     const {
@@ -29,6 +31,10 @@ const Rank: React.FC<RankProps> = (props) => {
         setGlobalList(rankList.slice(index, rankList.length));
     }, [rankList])
 
+    const enterDetail = (id: number) => {
+        props.history.push(`/rank/${id}`)
+    }
+
     const renderOfficialList = () => {
         return (
             <div className='official-list-wrapper'>
@@ -37,7 +43,11 @@ const Rank: React.FC<RankProps> = (props) => {
                     {
                         officialList.map((rank, index) => {
                             return (
-                                <div className='official-list-item' key={index}>
+                                <div
+                                    className='official-list-item'
+                                    key={index}
+                                    onClick={() => enterDetail(rank.id)}
+                                >
                                     <ImageLoader className='official-list-item-img' alt='' src={rank.coverImgUrl} />
                                     <div className='official-list-item-info'>
                                         {
@@ -65,7 +75,11 @@ const Rank: React.FC<RankProps> = (props) => {
                     {
                         globalList.map((rank, index) => {
                             return (
-                                <div className='global-list-item' key={index}>
+                                <div
+                                    className='global-list-item'
+                                    key={index}
+                                    onClick={() => { enterDetail(rank.id) }}
+                                >
                                     <ImageLoader className='global-list-item-img' src={rank.coverImgUrl} />
                                     <span className='global-list-item-update'>{rank.updateFrequency}</span>
                                 </div>
@@ -83,6 +97,7 @@ const Rank: React.FC<RankProps> = (props) => {
                 {renderOfficialList()}
                 {renderGlobalList()}
             </Scroll>
+            {renderRoutes(props.route?.routes)}
         </div>
     )
 }
@@ -110,4 +125,4 @@ const mapDispatchToProps = (dispatch: any): IDispatchProps => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Rank);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Rank));
