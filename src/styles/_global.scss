@@ -14,5 +14,29 @@
     font-family: "NotoSansMono";
 }
 
+.fly-enter,
+.fly-appear {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.fly-enter-active,
+.fly-appear-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: 0.3s;
+}
+
+.fly-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fly-exit-active {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: 0.3s;
+}
+
 $theme-red: #e74c3c;
 $theme-white: #f1f1f1;

@@ -6,8 +6,9 @@ import HorizenBarComponent from '../../components/HorizenBar';
 import { actionCreators } from './store';
 import { SingerTagItem, AlphaItem, ArtistItem } from './store/types';
 import ImageLoader from '../../components/ImageLoader';
+import { renderRoutes, RouteConfigComponentProps } from 'react-router-config';
 
-export type SingersProps = IStateProps & IDispatchProps;
+export type SingersProps = IStateProps & IDispatchProps & RouteConfigComponentProps
 
 const Singers: React.FC<SingersProps> = (props) => {
     const {
@@ -48,26 +49,37 @@ const Singers: React.FC<SingersProps> = (props) => {
         addSingerList(activeSingerTag, activeInitial, offset);
     }
 
-    return (
-        <div className='singers-wrapper'>
-            <HorizenBarComponent defaultActiveIndex={activeSingerTag} title='热门：' onSelect={handleSingerTagClick}>
-                {
-                    singerTagList.map(singerTag => (
-                        <HorizenBarComponent.Item key={singerTag.key} index={singerTag.key}>
-                            {singerTag.name}
-                        </HorizenBarComponent.Item>
-                    ))
-                }
-            </HorizenBarComponent>
-            <HorizenBarComponent defaultActiveIndex={activeInitial} title='首字母：' onSelect={handleAlphaClick}>
-                {
-                    alphaList.map(alpha => (
-                        <HorizenBarComponent.Item key={alpha.name} index={alpha.name}>
-                            {alpha.name}
-                        </HorizenBarComponent.Item>
-                    ))
-                }
-            </HorizenBarComponent>
+    const enterSingerDetail = (id: number) => {
+        props.history.push(`/singers/${id}`);
+    }
+
+    const renderHorizenBar = () => {
+        return (
+            <React.Fragment>
+                <HorizenBarComponent defaultActiveIndex={activeSingerTag} title='热门：' onSelect={handleSingerTagClick}>
+                    {
+                        singerTagList.map(singerTag => (
+                            <HorizenBarComponent.Item key={singerTag.key} index={singerTag.key}>
+                                {singerTag.name}
+                            </HorizenBarComponent.Item>
+                        ))
+                    }
+                </HorizenBarComponent>
+                <HorizenBarComponent defaultActiveIndex={activeInitial} title='首字母：' onSelect={handleAlphaClick}>
+                    {
+                        alphaList.map(alpha => (
+                            <HorizenBarComponent.Item key={alpha.name} index={alpha.name}>
+                                {alpha.name}
+                            </HorizenBarComponent.Item>
+                        ))
+                    }
+                </HorizenBarComponent>
+            </React.Fragment>
+        )
+    }
+
+    const renderSingerList = () => {
+        return (
             <div className='singer-list-wrapper'>
                 <Scroll
                     onPullUp={handlePullUpLoadMore}
@@ -78,7 +90,11 @@ const Singers: React.FC<SingersProps> = (props) => {
                         {
                             singerList.map(singer => {
                                 return (
-                                    <div className='singer-item-wrapper' key={singer.id}>
+                                    <div
+                                        className='singer-item-wrapper'
+                                        key={singer.id}
+                                        onClick={() => { enterSingerDetail(singer.id) }}
+                                    >
                                         <ImageLoader className='singer-pic' src={singer.picUrl} />
                                         <div className='singer-name'>{singer.name}</div>
                                     </div>
@@ -88,6 +104,14 @@ const Singers: React.FC<SingersProps> = (props) => {
                     </div>
                 </Scroll>
             </div>
+        )
+    }
+
+    return (
+        <div className='singers-wrapper'>
+            {renderHorizenBar()}
+            {renderSingerList()}
+            {renderRoutes(props.route?.routes)}
         </div>
     )
 }

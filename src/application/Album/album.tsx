@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { withRouter } from 'react-router';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header';
 import Scroll from '../../components/Scroll';
+import SongList from '../../components/SongList';
 import { AlbumTypes } from './store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getPlaylist } from './store/actionCreators';
@@ -13,7 +14,6 @@ interface AlbumUrlParms {
     id: string
 }
 
-// export interface AlbumProps extends RouteConfigComponentProps<AlbumUrlParms>, IStateProps, IDispatchProps { }
 export type AlbumProps = RouteConfigComponentProps<AlbumUrlParms> & IStateProps & IDispatchProps;
 
 const Album: React.FC<AlbumProps> = (props) => {
@@ -61,39 +61,11 @@ const Album: React.FC<AlbumProps> = (props) => {
         )
     }
 
-    const renderSongList = () => {
-        const tracks = playList.tracks;
+    const handleBack = useCallback(() => {
+        setShowStatus(false);
+    }, []);
 
-        return (
-            <div className='song-list-wrapper'>
-                <div className='first-line'>
-                    <div>
-                        <FontAwesomeIcon icon='play-circle' />
-                        <span>播放全部</span>
-                    </div>
-                    <div>
-                        <FontAwesomeIcon icon='plus' />
-                        <span>收藏</span>
-                    </div>
-                </div>
-                <div className='song-list-container'>
-                    {
-                        tracks.map((track, index) => (
-                            <div className='song-item' key={track.id}>
-                                <span>{index + 1}</span>
-                                <div className='song-info'>
-                                    <span className='song-name'>{track.name}</span>
-                                    <span className='song-singer'>{track.ar[0].name}</span>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-            </div>
-        )
-    }
-
-    const handleScroll = (pos: any) => {
+    const handleScroll = useCallback((pos: any) => {
         const minScrollY = -40;
         const percent = Math.abs(pos.y / minScrollY);
         const headerDOM = headerRef.current!;
@@ -108,7 +80,7 @@ const Album: React.FC<AlbumProps> = (props) => {
             headerDOM.style.opacity = '1';
             setIsMarquee(false);
         }
-    }
+    }, [headerRef])
 
     return (
         <CSSTransition
@@ -120,11 +92,11 @@ const Album: React.FC<AlbumProps> = (props) => {
             onExited={props.history.goBack}
         >
             <div className='album-wrapper'>
-                <Header ref={headerRef} title={playList.name} isMarquee={isMarquee} handleBack={() => { setShowStatus(false) }} />
+                <Header ref={headerRef} title={playList.name} isMarquee={isMarquee} handleBack={handleBack} />
                 <div className='album-content'>
                     <Scroll onScroll={handleScroll}>
                         {renderDesc()}
-                        {renderSongList()}
+                        <SongList tracks={playList.tracks} />
                     </Scroll>
                 </div>
             </div>

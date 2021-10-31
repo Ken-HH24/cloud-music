@@ -1,0 +1,83 @@
+.song-list-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .first-line {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-radius: 5px;
+        border-bottom: solid 1px #bdc3c7;
+
+        & > div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            & > svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            & > span {
+                margin-left: 10px;
+                font-weight: 700;
+                font-size: 15px;
+            }
+        }
+
+        & > div:nth-of-type(1) {
+            padding-left: 14px;
+            margin-right: auto;
+        }
+
+        & > div:nth-of-type(2) {
+            border-radius: 5px;
+            color: white;
+            background-color: $theme-red;
+            padding: 8px 14px;
+            border-bottom: solid 1px $theme-red;
+        }
+    }
+
+    .song-list-container {
+        display: flex;
+        flex-direction: column;
+
+        .song-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            & > span {
+                box-sizing: border-box;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 15px 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .song-info {
+                width: 100%;
+                padding: 5px 0 5px 20px;
+                display: flex;
+                flex-direction: column;
+                border-bottom: #e6e2de solid 1px;
+
+                .song-name {
+                    font-size: 20px;
+                    font-weight: 600;
+                    line-height: 30px;
+                }
+
+                .song-singer {
+                    color: #95a5a6;
+                    line-height: 25px;
+                }
+            }
+        }
+    }
+}

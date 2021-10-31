@@ -11,7 +11,7 @@ export interface AlphaItem {
 }
 
 export interface ArtistItem {
-    id: string;
+    id: number;
     name: string;
     picUrl: string;
 }
