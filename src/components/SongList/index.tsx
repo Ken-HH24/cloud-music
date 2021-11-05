@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface TrackItem {
@@ -12,11 +12,11 @@ export interface SongListProps {
     handleTrackClick?: (id: number) => void
 }
 
-const SongList: React.FC<SongListProps> = (props) => {
+const SongList = forwardRef<HTMLDivElement, SongListProps>((props, ref) => {
     const { tracks, handleTrackClick } = props;
 
     return (
-        <div className='song-list-wrapper'>
+        <div className='song-list-wrapper' ref={ref}>
             <div className='first-line'>
                 <div>
                     <FontAwesomeIcon icon='play-circle' />
@@ -46,6 +46,6 @@ const SongList: React.FC<SongListProps> = (props) => {
             </div>
         </div>
     )
-}
+})
 
 export default SongList;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, forwardRef, useMemo } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useMemo, useImperativeHandle } from 'react';
 import BScroll from '@better-scroll/core';
 import PullDown from '@better-scroll/pull-down';
 import PullUp from '@better-scroll/pull-up';
@@ -14,13 +14,14 @@ export interface ScrollInterface {
     children?: React.ReactNode;
     pullingDownLoading?: boolean;
     pullingUpLoading?: boolean;
+    threshold?: number;
 }
 
 BScroll.use(ObserveDOM);
 BScroll.use(PullDown);
 BScroll.use(PullUp);
 
-const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
+const Scroll = forwardRef<any, ScrollInterface>((props, ref) => {
     const {
         direction,
         onPullUp,
@@ -28,7 +29,8 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         onPullDown,
         children,
         pullingDownLoading,
-        pullingUpLoading
+        pullingUpLoading,
+        threshold
     } = props;
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -47,13 +49,13 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
             },
 
             pullDownRefresh: {
-                threshold: 60,
-                stop: 60
+                threshold: threshold || 60,
+                stop: threshold || 60
             },
 
             pullUpLoad: {
-                threshold: 60,
-                stop: 60
+                threshold: threshold || 60,
+                stop: threshold || 60
             }
 
         });
@@ -91,19 +93,33 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     if (!scrollObj || !scrollThrottle) {
+    //         return;
+    //     } else {
+    //         scrollObj.on('scroll', (scrollEvent: Event) => {
+    //             scrollThrottle(scrollEvent)
+    //         });
+
+    //         return () => {
+    //             scrollObj.off('scroll');
+    //         }
+    //     }
+    // }, [scrollObj, scrollThrottle]);
+
     useEffect(() => {
-        if (!scrollObj || !scrollThrottle) {
+        if (!scrollObj || !onScroll) {
             return;
         } else {
             scrollObj.on('scroll', (scrollEvent: Event) => {
-                scrollThrottle(scrollEvent)
+                onScroll(scrollEvent)
             });
 
             return () => {
                 scrollObj.off('scroll');
             }
         }
-    }, [scrollObj, scrollThrottle]);
+    }, [scrollObj, onScroll]);
 
     useEffect(() => {
         if (!scrollObj || !handlePullDown) {
@@ -126,6 +142,17 @@ const Scroll = forwardRef<HTMLElement, ScrollInterface>((props, ref) => {
             }
         }
     }, [scrollObj, onPullUp]);
+
+    useImperativeHandle(ref, () => {
+        return {
+            refresh() {
+                if (scrollObj) {
+                    scrollObj.refresh();
+                    scrollObj.scrollTo(0, 0);
+                }
+            }
+        }
+    })
 
 
     return (

@@ -1,6 +1,7 @@
 .song-list-wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .first-line {
         display: flex;

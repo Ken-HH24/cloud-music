@@ -4,7 +4,59 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 100;
     background: #fff;
-}
 
+    .singer-desc {
+        position: relative;
+        width: 100vw;
+
+        .singer-img {
+            width: 100%;
+        }
+
+        .singer-collect-btn {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: 100px;
+            background: $theme-red;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 20px;
+
+            & > span {
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .singer-song-list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 200;
+        overflow: visible;
+
+        > div {
+            overflow: visible;
+        }
+    }
+
+    .singer-bg-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 200;
+        background: #fff;
+    }
+}
