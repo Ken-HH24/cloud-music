@@ -13,6 +13,26 @@ axiosInstance.interceptors.response.use(
     }
 );
 
+const typeToString: { [T: string]: string } = {
+    '全部': '-1',
+    '男歌手': '1',
+    '女歌手': '2',
+    '乐队': '3'
+}
+
+const areaToString: { [T: string]: string } = {
+    '全部': '-1',
+    '华语': '7',
+    '欧美': '96',
+    '日本': '8',
+    '韩国': '16',
+    '其他': '0'
+}
+
+export type playMode = 'random' | 'sequence' | 'loop';
+
 export {
-    axiosInstance
+    axiosInstance,
+    typeToString,
+    areaToString,
 }

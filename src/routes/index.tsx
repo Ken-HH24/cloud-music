@@ -6,6 +6,7 @@ import Singers from '../application/Singers';
 import Rank from '../application/Rank';
 import Album from '../application/Album';
 import Singer from '../application/Singer';
+import player from '../application/Player/player';
 
 const routeConfig: RouteConfig[] = [
     {
@@ -16,7 +17,7 @@ const routeConfig: RouteConfig[] = [
                 path: '/',
                 exact: true,
                 render: () => (
-                    <Redirect to={'/recommend'} />   
+                    <Redirect to={'/recommend'} />
                 )
             },
             {
@@ -48,6 +49,10 @@ const routeConfig: RouteConfig[] = [
                         component: Album
                     }
                 ]
+            },
+            {
+                path: '/player',
+                component: player
             }
         ]
     }
