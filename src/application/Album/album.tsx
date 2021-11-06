@@ -10,11 +10,11 @@ import { getPlaylist } from './store/actionCreators';
 import { connect } from 'react-redux';
 import { RouteConfigComponentProps } from 'react-router-config';
 
-interface AlbumUrlParms {
+interface AlbumUrlParams {
     id: string
 }
 
-export type AlbumProps = RouteConfigComponentProps<AlbumUrlParms> & IStateProps & IDispatchProps;
+export type AlbumProps = RouteConfigComponentProps<AlbumUrlParams> & IStateProps & IDispatchProps;
 
 const Album: React.FC<AlbumProps> = (props) => {
     const { playList, getPlaylist } = props;

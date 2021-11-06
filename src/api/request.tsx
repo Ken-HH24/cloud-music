@@ -3,6 +3,7 @@ import { RecommendTypes } from '../application/Recommend/store';
 import { SingersTypes } from '../application/Singers/store';
 import { RankTypes } from '../application/Rank/store';
 import { AlbumTypes } from '../application/Album/store';
+import { SingerTypes } from '../application/Singer/store';
 
 interface IBannerResponse {
     banners: RecommendTypes.BannerItem[];
@@ -22,6 +23,11 @@ interface IRankList {
 
 interface IPlayList {
     playlist: AlbumTypes.PlayListItem
+}
+
+interface ISingerDetail {
+    artist: SingerTypes.Artist
+    hotSongs: SingerTypes.Song[]
 }
 
 export const getBannerRequest = () => {
@@ -45,5 +51,5 @@ export const getPlaylistDetailRequest = (id: string) => {
 }
 
 export const getSingerDetailRequest = (id: string) => {
-    return axiosInstance.get<any, any>(`/artists?id=${id}`);
+    return axiosInstance.get<any, ISingerDetail>(`/artists?id=${id}`);
 }

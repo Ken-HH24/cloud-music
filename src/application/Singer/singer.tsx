@@ -6,11 +6,22 @@ import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header';
 import SongList from '../../components/SongList';
 import Scroll from '../../components/Scroll';
-import { getSingerDetailRequest } from '../../api/request';
+import { ISingerState as IStateProps } from './store/reducer';
+import { actionCreators, SingerTypes } from './store';
+import { connect } from 'react-redux';
 
-type SingerProps = RouteConfigComponentProps
+interface SingerUrlParams {
+    id: string
+}
+
+type SingerProps = RouteConfigComponentProps<SingerUrlParams> & IStateProps & IDispatchToProps
 
 const Singer: React.FC<SingerProps> = (props) => {
+    const {
+        singer,
+        getSingerDetail
+    } = props;
+
     const [showStatus, setShowStatus] = useState(true);
     const singerImgRef = useRef<HTMLImageElement>(null);
     const singerSongRef = useRef<HTMLDivElement>(null);
@@ -20,33 +31,24 @@ const Singer: React.FC<SingerProps> = (props) => {
     const scrollRef = useRef<any>(null);
     const initialHeight = useRef(0);
 
-    const track = {
-        id: 1,
-        name: 'Hello World',
-        ar: [{ id: 2, name: 'Tom' }]
-    }
-    const tracks = [];
-    for (let i = 0; i < 20; i++) {
-        tracks.push(track);
-    }
     const OFFSET = 5;
-
-    useEffect(() => {
-        getSingerDetailRequest('2116').then(data => {
-            console.log(data);
-        })
-
+    const initDOM = () => {
         const offsetHeight = singerImgRef.current!.offsetHeight;
         let h: number;
-        if (offsetHeight === 0) {
+        if (offsetHeight === 0)
             h = 336;
-        } else {
+        else
             h = offsetHeight
-        }
+
         initialHeight.current = h;
         singerSongRef.current!.style.top = `${h - OFFSET}px`;
         layerRef.current!.style.top = `${h - OFFSET}px`;
         scrollRef.current.refresh();
+    }
+
+    useEffect(() => {
+        getSingerDetail(props.match.params.id);
+        initDOM();
     }, []);
 
     const handleBack = useCallback(() => {
@@ -81,6 +83,16 @@ const Singer: React.FC<SingerProps> = (props) => {
         }
     }
 
+    const mapSongsToTracks = (songs: SingerTypes.Song[]) => {
+        return songs.map((song, index) => ({
+            id: index,
+            name: song.name,
+            ar: [{ id: index, name: singer.artist.name }]
+        }))
+    }
+
+    const tracks = mapSongsToTracks(singer.hotSongs);
+
     return (
         <CSSTransition
             in={showStatus}
@@ -96,7 +108,7 @@ const Singer: React.FC<SingerProps> = (props) => {
                         alt='singer-img'
                         className='singer-img'
                         ref={singerImgRef}
-                        src='https://p1.music.126.net/w_vuv9hBWq2hlJxJcmJrjg==/109951166115915081.jpg'
+                        src={singer.artist.picUrl}
                     />
                     <div className='singer-collect-btn' ref={collectButtonRef}>
                         <FontAwesomeIcon icon='plus' />
@@ -114,4 +126,23 @@ const Singer: React.FC<SingerProps> = (props) => {
     )
 }
 
-export default withRouter(Singer);
+interface IDispatchToProps {
+    getSingerDetail: Function
+}
+
+const mapStateToProps = (state: { singer: IStateProps }): IStateProps => {
+    return {
+        singer: state.singer.singer
+    }
+}
+
+const mapDispatchToProps = (dispatch: any): IDispatchToProps => {
+    return {
+        getSingerDetail(id: string) {
+            const action = actionCreators.getSingerDetail(id);
+            dispatch(action);
+        }
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Singer));
