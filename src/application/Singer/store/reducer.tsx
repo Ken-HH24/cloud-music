@@ -4,6 +4,7 @@ import { Singer } from './types';
 
 export interface ISingerState {
     singer: Singer
+    loading: boolean
 }
 
 const defaultState: ISingerState = {
@@ -13,7 +14,8 @@ const defaultState: ISingerState = {
             picUrl: ''
         },
         hotSongs: []
-    }
+    },
+    loading: false
 }
 
 const singerReducer = (state: ISingerState = defaultState, action: SingerAction): ISingerState => {
@@ -22,6 +24,11 @@ const singerReducer = (state: ISingerState = defaultState, action: SingerAction)
             return {
                 ...state,
                 singer: action.data
+            }
+        case actionTypes.CHANGE_LOADING:
+            return {
+                ...state,
+                loading: action.data
             }
         default:
             return state

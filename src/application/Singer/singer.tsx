@@ -1,11 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { withRouter } from 'react-router';
 import { RouteConfigComponentProps } from 'react-router-config';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../components/Header';
 import SongList from '../../components/SongList';
 import Scroll from '../../components/Scroll';
+import Loading from '../../components/Loading';
 import { ISingerState as IStateProps } from './store/reducer';
 import { actionCreators, SingerTypes } from './store';
 import { connect } from 'react-redux';
@@ -19,6 +20,7 @@ type SingerProps = RouteConfigComponentProps<SingerUrlParams> & IStateProps & ID
 const Singer: React.FC<SingerProps> = (props) => {
     const {
         singer,
+        loading,
         getSingerDetail
     } = props;
 
@@ -33,6 +35,8 @@ const Singer: React.FC<SingerProps> = (props) => {
 
     const OFFSET = 5;
     const initDOM = () => {
+        if (loading)
+            return;
         const offsetHeight = singerImgRef.current!.offsetHeight;
         let h: number;
         if (offsetHeight === 0)
@@ -50,6 +54,10 @@ const Singer: React.FC<SingerProps> = (props) => {
         getSingerDetail(props.match.params.id);
         initDOM();
     }, []);
+
+    useEffect(() => {
+        initDOM();
+    }, [loading])
 
     const handleBack = useCallback(() => {
         setShowStatus(false);
@@ -83,6 +91,22 @@ const Singer: React.FC<SingerProps> = (props) => {
         }
     }
 
+    const renderLoading = () => {
+        const styles: CSSProperties = {
+            background: '#fff',
+            height: '100%',
+            position: 'fixed',
+            top: '0',
+            bottom: '0',
+            left: '0',
+            right: '0'
+        }
+
+        return (
+            <Loading style={styles} />
+        )
+    }
+
     const mapSongsToTracks = (songs: SingerTypes.Song[]) => {
         return songs.map((song, index) => ({
             id: index,
@@ -91,18 +115,16 @@ const Singer: React.FC<SingerProps> = (props) => {
         }))
     }
 
-    const tracks = mapSongsToTracks(singer.hotSongs);
-
-    return (
-        <CSSTransition
-            in={showStatus}
-            timeout={300}
-            appear={true}
-            classNames='fly'
-            onExited={props.history.goBack}
-        >
+    const renderSingerPage = () => {
+        const tracks = mapSongsToTracks(singer.hotSongs);
+        return (
             <div className='singer-wrapper'>
-                <Header title='header' handleBack={handleBack} style={{ background: 'none' }} ref={headerRef} />
+                <Header
+                    title={singer.artist.name}
+                    handleBack={handleBack}
+                    style={{ background: 'none' }}
+                    ref={headerRef}
+                />
                 <div className='singer-desc'>
                     <img
                         alt='singer-img'
@@ -122,6 +144,18 @@ const Singer: React.FC<SingerProps> = (props) => {
                     </Scroll>
                 </div>
             </div>
+        )
+    }
+
+    return (
+        <CSSTransition
+            in={showStatus}
+            timeout={300}
+            appear={true}
+            classNames='fly'
+            onExited={props.history.goBack}
+        >
+            {loading ? renderLoading() : renderSingerPage()}
         </CSSTransition>
     )
 }
@@ -132,7 +166,8 @@ interface IDispatchToProps {
 
 const mapStateToProps = (state: { singer: IStateProps }): IStateProps => {
     return {
-        singer: state.singer.singer
+        singer: state.singer.singer,
+        loading: state.singer.loading
     }
 }
 
