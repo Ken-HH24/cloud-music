@@ -153,6 +153,7 @@ const Singer: React.FC<SingerProps> = (props) => {
             timeout={300}
             appear={true}
             classNames='fly'
+            unmountOnExit={true}
             onExited={props.history.goBack}
         >
             {loading ? renderLoading() : renderSingerPage()}

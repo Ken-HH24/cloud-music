@@ -1,4 +1,5 @@
 import React from 'react';
+import Player from '../Player';
 import { withRouter } from 'react-router'
 import { RouteConfigComponentProps, renderRoutes } from 'react-router-config'
 import { NavLink } from 'react-router-dom';
@@ -32,7 +33,8 @@ const Home: React.FC<HomeProps> = (props) => {
                     </div>
                 </NavLink>
             </div>
-            { renderRoutes(route?.routes) }
+            {renderRoutes(route?.routes)}
+            <Player />
         </div>
     )
 }

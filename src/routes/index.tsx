@@ -6,7 +6,7 @@ import Singers from '../application/Singers';
 import Rank from '../application/Rank';
 import Album from '../application/Album';
 import Singer from '../application/Singer';
-import player from '../application/Player/player';
+import Player from '../application/Player';
 
 const routeConfig: RouteConfig[] = [
     {
@@ -52,7 +52,7 @@ const routeConfig: RouteConfig[] = [
             },
             {
                 path: '/player',
-                component: player
+                component: Player
             }
         ]
     }

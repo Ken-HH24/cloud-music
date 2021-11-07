@@ -1,13 +1,30 @@
 import React from 'react';
+import MiniPlayer from './miniPlayer';
+import NormalPlayer from './normalPlayer';
 import { connect } from 'react-redux';
 import { playMode } from '../../api/config';
 import { actionCreators } from './store';
 import { IPlayerState as IStateProps } from './store/reducer';
 
-const Player: React.FC = (props) => {
+export type PlayerProps = IStateProps & IDispatchProps;
+
+const Player: React.FC<PlayerProps> = (props) => {
+    const { fullScreen, setFullScreen } = props;
+
+    const currentSong = {
+        al: { picUrl: "https://p1.music.126.net/JL_id1CFwNJpzgrXwemh4Q==/109951164172892390.jpg" },
+        name: "木偶人",
+        ar: [{ name: "薛之谦" }]
+    }
+
     return (
         <div>
-            Player
+            <MiniPlayer
+                song={currentSong}
+            />
+            <NormalPlayer
+                song={currentSong}
+            />
         </div>
     )
 }

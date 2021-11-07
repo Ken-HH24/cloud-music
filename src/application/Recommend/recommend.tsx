@@ -31,9 +31,7 @@ const Recommend: React.FC<RecommendProps> = (props) => {
 
     const renderRecommend = () => {
         return (
-            <Scroll
-                onScroll={() => { forceCheck() }}
-            >
+            <Scroll onScroll={() => { forceCheck() }}>
                 <div>
                     <Slider bannerList={bannerList}></Slider>
                     <RecommendList recommendList={recommendList} />

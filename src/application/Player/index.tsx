@@ -1,3 +1,3 @@
-import playerReducer from './store/reducer';
+import Player from './player';
 
-export { playerReducer };
+export default Player;

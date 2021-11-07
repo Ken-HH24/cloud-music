@@ -1,0 +1,165 @@
+.mini-player-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 65px;
+    z-index: 1000;
+    width: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-top: 1px solid #ecf0f1;
+
+    .mini-player-img {
+        width: 45px;
+        height: 45px;
+        margin-left: 20px;
+
+        & > img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: spin 8s linear infinite;
+        }
+    }
+
+    .mini-player-text {
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .mini-player-song-name {
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .mini-player-song-singer {
+            font-size: 12px;
+        }
+    }
+
+    .mini-player-control {
+        margin-left: auto;
+        margin-right: 20px;
+
+        & > svg {
+            width: 30px;
+            height: 30px;
+            color: $theme-red;
+        }
+
+        & > svg:nth-of-type(1) {
+            margin-right: 20px;
+        }
+    }
+}
+
+.normal-player-wrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: $theme-white;
+
+    .normal-player-bg {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        img {
+            width: 100%;
+            height: 100%;
+            filter: blur(20px);
+            // transform: scale(110%);
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .layer {
+            width: 100%;
+            height: 100%;
+            background: $theme-white;
+            filter: none;
+            opacity: 0.3;
+        }
+    }
+
+    .normal-player-header {
+        position: relative;
+
+        .back {
+            position: absolute;
+            left: 10px;
+            top: 5px;
+            width: 30px;
+            height: 25px;
+
+            & > svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            opacity: 0.8;
+
+            &.song-name {
+                font-size: 20px;
+                line-height: 40px;
+                margin-bottom: 0;
+            }
+
+            &.song-singer {
+                font-size: 16px;
+                line-height: 40px;
+                color: $theme-gray;
+            }
+        }
+    }
+
+    .normal-player-main {
+        position: fixed;
+        top: 80px;
+        bottom: 170px;
+        left: 0;
+        right: 0;
+
+        .normal-player-cd-wrapper {
+            position: absolute;
+            top: 10%;
+            width: 80%;
+            height: 80vw;
+            left: 0;
+            right: 0;
+            margin: auto;
+
+            .cd {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                animation: spin 15s infinite linear;
+            }
+        }
+    }
+
+    .normal-player-footer {
+        position: absolute;
+        bottom: 70px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        padding: 0 10px;
+
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+}

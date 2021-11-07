@@ -38,5 +38,16 @@
     transition: 0.3s;
 }
 
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 $theme-red: #e74c3c;
 $theme-white: #f1f1f1;
+$theme-gray: #ecf0f1;
