@@ -1,0 +1,29 @@
+.progress-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+
+    .progress-circle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: visible;
+
+        circle {
+            stroke-width: 8px;
+            transform-origin: center;
+            overflow: visible;
+            &.progress-background {
+                transform: scale(0.9);
+                stroke: $theme-gray;
+            }
+            &.progress-bar {
+                transform: scale(0.9) rotate(-90deg);
+                stroke: $theme-red;
+            }
+        }
+    }
+}
