@@ -21,9 +21,13 @@ const Player: React.FC<PlayerProps> = (props) => {
         <div>
             <MiniPlayer
                 song={currentSong}
+                fullScreen={fullScreen}
+                toggleFullScreen={setFullScreen}
             />
             <NormalPlayer
                 song={currentSong}
+                fullScreen={fullScreen}
+                toggleFullScreen={setFullScreen}
             />
         </div>
     )

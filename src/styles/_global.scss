@@ -38,6 +38,45 @@
     transition: 0.3s;
 }
 
+.mini-enter {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+}
+
+.mini-enter-active {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition: all 0.4s;
+}
+
+.mini-exit-active {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+    transition: all 0.4s;
+}
+
+.normal-enter {
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+.normal-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s;
+}
+
+.normal-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.normal-exit-active {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.4s;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0);
