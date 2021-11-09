@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { PlayerTypes } from './store';
+import ProgressBar from '../../components/ProgressBar';
 
 export interface NormalPlayerProps {
     song: PlayerTypes.Song
@@ -42,13 +43,19 @@ const NormalPlayer: React.FC<NormalPlayerProps> = (props) => {
                     <div className='normal-player-cd-wrapper'>
                         <img alt='cd' src={song.al.picUrl} className='cd' />
                     </div>
+
                 </div>
                 <div className='normal-player-footer'>
-                    <FontAwesomeIcon icon='sync-alt' />
-                    <FontAwesomeIcon icon='step-backward' />
-                    <FontAwesomeIcon icon='pause-circle' />
-                    <FontAwesomeIcon icon='step-forward' />
-                    <FontAwesomeIcon icon='list-ul' />
+                    <div className='player-progress-bar'>
+                        <ProgressBar />
+                    </div>
+                    <div className='btn-group'>
+                        <FontAwesomeIcon icon='sync-alt' />
+                        <FontAwesomeIcon icon='step-backward' />
+                        <FontAwesomeIcon icon='pause-circle' />
+                        <FontAwesomeIcon icon='step-forward' />
+                        <FontAwesomeIcon icon='list-ul' />
+                    </div>
                 </div>
             </div>
         </CSSTransition>
