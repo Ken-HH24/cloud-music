@@ -1,5 +1,8 @@
 import { playMode } from '../../../api/config';
 import * as actionTypes from './constants';
+import { PlayerTypes } from '.';
+import { Dispatch } from 'redux';
+import { getPlaylistDetailRequest } from '../../../api/request';
 
 export interface ISetCurrentIndexAction {
     type: actionTypes.SET_CURRENT_INDEX
@@ -8,7 +11,7 @@ export interface ISetCurrentIndexAction {
 
 export interface ISetCurrentSongAction {
     type: actionTypes.SET_CURRENT_SONG
-    data: {}
+    data: PlayerTypes.Song
 }
 
 export interface ISetFullScreenAction {
@@ -23,7 +26,7 @@ export interface ISetPlayingStateAction {
 
 export interface ISetPlayListAction {
     type: actionTypes.SET_PLAY_LIST
-    data: []
+    data: PlayerTypes.Song[]
 }
 
 export interface ISetPlayModeAction {
@@ -33,7 +36,7 @@ export interface ISetPlayModeAction {
 
 export interface ISetSequencePlayListAction {
     type: actionTypes.SET_SEQUENCE_PLAYLIST
-    data: []
+    data: PlayerTypes.Song[]
 }
 
 export interface ISetShowPlayListAction {
@@ -49,7 +52,7 @@ export const setCurrentIndex = (data: number): ISetCurrentIndexAction => ({
     data
 })
 
-export const setCurrentSong = (data: {}): ISetCurrentSongAction => ({
+export const setCurrentSong = (data: PlayerTypes.Song): ISetCurrentSongAction => ({
     type: actionTypes.SET_CURRENT_SONG,
     data
 })
@@ -59,7 +62,7 @@ export const setFullScreen = (data: boolean): ISetFullScreenAction => ({
     data
 })
 
-export const setPlayList = (data: []): ISetPlayListAction => ({
+export const setPlayList = (data: PlayerTypes.Song[]): ISetPlayListAction => ({
     type: actionTypes.SET_PLAY_LIST,
     data
 })
@@ -74,7 +77,7 @@ export const setPlayMode = (data: playMode): ISetPlayModeAction => ({
     data
 })
 
-export const setSequencePlayList = (data: []): ISetSequencePlayListAction => ({
+export const setSequencePlayList = (data: PlayerTypes.Song[]): ISetSequencePlayListAction => ({
     type: actionTypes.SET_SEQUENCE_PLAYLIST,
     data
 })
@@ -83,3 +86,13 @@ export const setShowPlayList = (data: boolean): ISetShowPlayListAction => ({
     type: actionTypes.SET_SHOW_PLAYLIST,
     data
 })
+
+export const getPlayList = (id: string) => {
+    return (dispatch: Dispatch<PlayerAction>) => {
+        getPlaylistDetailRequest(id).then(data => {
+            const playlist = data.playlist.tracks;
+            dispatch(setPlayList(playlist));
+            dispatch(setSequencePlayList(playlist));
+        })
+    }
+}

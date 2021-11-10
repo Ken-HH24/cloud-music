@@ -1,3 +1,4 @@
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import axios from 'axios';
 
 export const baseUrl = 'http://localhost:8000';
@@ -30,6 +31,11 @@ const areaToString: { [T: string]: string } = {
 }
 
 export type playMode = 'random' | 'sequence' | 'loop';
+export const modeToIcon: { [key: string]: IconProp } = {
+    'sequence': 'sync-alt',
+    'random': 'random',
+    'loop': 'undo'
+}
 
 export {
     axiosInstance,

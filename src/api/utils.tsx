@@ -99,3 +99,27 @@ export const splitRankListIndex = (rankList: RankItem[]): number => {
     }
     return index;
 }
+
+export const getSongUrl = (id: number): string => {
+    return `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+}
+
+export const formatSongTime = (time: number): string => {
+    const interval = time | 0;
+    const minute = Math.floor(interval / 60);
+    const seconde = interval - minute * 60;
+    return `${minute < 10 ? ('0' + minute) : minute}:${seconde < 10 ? ('0' + seconde) : seconde}`;
+}
+
+export function shuffleList<T>(list: T[]): T[] {
+    const len = list.length;
+    const resList = list.slice();
+    for (let i = 0; i < len; i++) {
+        const x = (Math.random() * len) | 0;
+        const y = (Math.random() * len) | 0;
+        const temp = resList[x];
+        resList[x] = resList[y];
+        resList[y] = temp;
+    }
+    return resList;
+}

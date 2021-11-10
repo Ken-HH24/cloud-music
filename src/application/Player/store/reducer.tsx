@@ -1,16 +1,17 @@
 import { playMode } from '../../../api/config';
 import * as actionTypes from './constants';
 import { PlayerAction } from './actionCreators';
+import { PlayerTypes } from '.';
 
 export interface IPlayerState {
     fullScreen: boolean
     playing: boolean
-    sequencePlayList: []
-    playList: []
+    sequencePlayList: PlayerTypes.Song[]
+    playList: PlayerTypes.Song[]
     mode: playMode
     currentIndex: number
     showPlaylist: boolean
-    currentSong: {}
+    currentSong: PlayerTypes.Song | null
 }
 
 const defaultState: IPlayerState = {
@@ -21,7 +22,7 @@ const defaultState: IPlayerState = {
     mode: 'sequence',
     currentIndex: 0,
     showPlaylist: false,
-    currentSong: {}
+    currentSong: null
 }
 
 const playerReducer = (state: IPlayerState = defaultState, action: PlayerAction): IPlayerState => {

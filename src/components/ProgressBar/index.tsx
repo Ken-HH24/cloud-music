@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 
 export interface ProgressBarProps {
-    initialPercentage?: number
+    percentage?: number
     percentageChange?: (percentage: number) => void
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = (props) => {
-    const { initialPercentage, percentageChange } = props;
+    const { percentage, percentageChange } = props;
     const initialPosX = useRef(0);
     const progressBarWidth = useRef(0);
     const progressInnerRef = useRef<HTMLDivElement>(null);
@@ -15,10 +15,10 @@ const ProgressBar: React.FC<ProgressBarProps> = (props) => {
     useEffect(() => {
         initialPosX.current = progressInnerRef.current!.getBoundingClientRect().x;
         progressBarWidth.current = progressOuterRef.current!.getBoundingClientRect().width;
-        if (initialPercentage) {
-            progressInnerRef.current!.style.width = `${Math.max(100, initialPercentage)}%`;
+        if (percentage) {
+            progressInnerRef.current!.style.width = `${Math.min(100, percentage)}%`;
         }
-    }, [initialPercentage])
+    }, [percentage])
 
     const updateProgressBar = (posX: number) => {
         const initialX = initialPosX.current;
