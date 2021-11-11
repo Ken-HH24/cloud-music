@@ -27,12 +27,11 @@ const Player: React.FC<PlayerProps> = (props) => {
         setPlayingState,
         setPlayMode,
         setPlayList,
-        getPlayList
     } = props;
 
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const percent = currentTime / duration * 100;
+    const percent = isNaN(currentTime / duration * 100) ? 0 : currentTime / duration * 100;
     const audioRef = useRef<HTMLAudioElement>(null);
 
     const modeStrategies = {
@@ -44,7 +43,6 @@ const Player: React.FC<PlayerProps> = (props) => {
         'random': function () {
             setPlayMode('random')
             const newPlayList = shuffleList<PlayerTypes.Song>(sequencePlayList);
-            console.log(newPlayList, sequencePlayList);
             setPlayList(newPlayList);
             for (let i = 0; i < newPlayList.length; i++) {
                 if (newPlayList[i].id === currentSong?.id) {
@@ -67,7 +65,6 @@ const Player: React.FC<PlayerProps> = (props) => {
     }
 
     const handleModeChange = (newMode: playMode) => {
-        console.log('mode change', newMode);
         const strategy = modeStrategies[newMode];
         strategy();
         if (playing) {
@@ -78,27 +75,31 @@ const Player: React.FC<PlayerProps> = (props) => {
     }
 
     useEffect(() => {
-        getPlayList('3778678');
-    }, [])
-
-    useEffect(() => {
-        if (!sequencePlayList || sequencePlayList.length === 0)
-            return;
-        handleSongChange(0);
+        handleModeChange(mode);
     }, [sequencePlayList])
 
-    const handleSongChange = (index: number) => {
-        const song = playList[index];
-        audioRef.current!.src = getSongUrl(song.id);
-        setCurrentTime(0);
-        setCurrentSong(song);
-        setCurrentIndex(index);
-        setDuration(song.dt / 1000 | 0);
-        if (playing) {
+    useEffect(() => {
+        if (currentSong) {
+            audioRef.current!.src = getSongUrl(currentSong.id);
+            setCurrentTime(0);
+            setDuration(currentSong.dt / 1000 | 0);
+            setPlayingState(true);
             setTimeout(() => {
                 audioRef.current!.play();
             });
+            for (let i = 0; i < playList.length; i++) {
+                if (playList[i].id === currentSong.id) {
+                    setCurrentIndex(i);
+                    break;
+                }
+            }
         }
+    }, [currentSong])
+
+    const handleSongChange = (index: number) => {
+        const song = playList[index];
+        setCurrentSong(song);
+        setCurrentIndex(index);
     }
 
     const handleTimeUpdate = (e: any) => {
@@ -131,8 +132,16 @@ const Player: React.FC<PlayerProps> = (props) => {
     }
 
     const handleNextSong = () => {
-        const newIndex = (currentIndex + 1) % playList.length;
-        handleSongChange(newIndex);
+        if (mode === 'loop') {
+            audioRef.current!.currentTime = 0;
+            setCurrentTime(0);
+            setTimeout(() => {
+                audioRef.current!.play();
+            });
+        } else {
+            const newIndex = (currentIndex + 1) % playList.length;
+            handleSongChange(newIndex);
+        }
     }
 
     const handlePrevSong = () => {

@@ -1,6 +1,9 @@
 export interface Song {
+    id: number
+    dt: number
     name: string
-    al: { id: number }
+    al: { picUrl: string }
+    ar: { name: string }[]
 }
 
 export interface Artist {

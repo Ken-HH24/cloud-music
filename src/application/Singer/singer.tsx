@@ -107,16 +107,8 @@ const Singer: React.FC<SingerProps> = (props) => {
         )
     }
 
-    const mapSongsToTracks = (songs: SingerTypes.Song[]) => {
-        return songs.map((song, index) => ({
-            id: index,
-            name: song.name,
-            ar: [{ id: index, name: singer.artist.name }]
-        }))
-    }
-
     const renderSingerPage = () => {
-        const tracks = mapSongsToTracks(singer.hotSongs);
+        const tracks = singer.hotSongs;
         return (
             <div className='singer-wrapper'>
                 <Header
