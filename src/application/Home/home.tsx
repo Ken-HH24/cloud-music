@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Player from '../Player';
 import { withRouter } from 'react-router'
 import { RouteConfigComponentProps, renderRoutes } from 'react-router-config'
@@ -9,6 +9,7 @@ interface HomeProps extends RouteConfigComponentProps { }
 
 const Home: React.FC<HomeProps> = (props) => {
     const { route } = props;
+
     return (
         <div>
             <div className='navbar-wrapper'>

@@ -1,7 +1,3 @@
-export interface Song {
-    id: number
-    dt: number
-    name: string
-    al: { picUrl: string }
-    ar: { name: string }[]
-}
+import { Track } from '../../../api/types';
+
+export type Song = Track;

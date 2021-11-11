@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MiniPlayer from './miniPlayer';
 import NormalPlayer from './normalPlayer';
 import { connect } from 'react-redux';

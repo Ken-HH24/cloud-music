@@ -1,22 +1,15 @@
 import React, { forwardRef, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { connect } from 'react-redux';
-import { actionCreators, PlayerTypes } from '../../application/Player/store';
-
-interface TrackItem {
-    id: number
-    dt: number
-    name: string
-    al: { picUrl: string }
-    ar: { name: string }[]
-}
+import { IPlayerDispatchProps, mapPlayerDispatchToProps } from '../../application/Player/store';
+import { Track } from '../../api/types';
 
 interface BaseSongListProps {
-    tracks: TrackItem[]
+    tracks: Track[]
     handleTrackClick?: (id: number) => void
 }
 
-export type SongListProps = BaseSongListProps & Partial<IDispatchProps>;
+export type SongListProps = BaseSongListProps & Partial<IPlayerDispatchProps>;
 
 const SongList = forwardRef<HTMLDivElement, SongListProps>((props, ref) => {
     const isFirst = useRef(true);
@@ -26,7 +19,7 @@ const SongList = forwardRef<HTMLDivElement, SongListProps>((props, ref) => {
         changeSequencePlayList
     } = props;
 
-    const handleSongPlay = (song: TrackItem) => {
+    const handleSongPlay = (song: Track) => {
         if (isFirst.current) {
             isFirst.current = false;
             changeSequencePlayList && changeSequencePlayList(tracks)
@@ -67,35 +60,4 @@ const SongList = forwardRef<HTMLDivElement, SongListProps>((props, ref) => {
     )
 })
 
-interface IDispatchProps {
-    changeSequencePlayList: (data: PlayerTypes.Song[]) => void
-    changePlayList: (data: PlayerTypes.Song[]) => void
-    changeCurrentIndex: (data: number) => void
-    changeCurrentSong: (data: PlayerTypes.Song) => void
-}
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-    return {
-        changeSequencePlayList(data: PlayerTypes.Song[]) {
-            const action = actionCreators.setSequencePlayList(data);
-            dispatch(action);
-        },
-
-        changePlayList(data: PlayerTypes.Song[]) {
-            const action = actionCreators.setPlayList(data);
-            dispatch(action);
-        },
-
-        changeCurrentIndex(data: number) {
-            const action = actionCreators.setCurrentIndex(data);
-            dispatch(action);
-        },
-
-        changeCurrentSong(data: PlayerTypes.Song) {
-            const action = actionCreators.setCurrentSong(data);
-            dispatch(action);
-        }
-    }
-}
-
-export default connect(null, mapDispatchToProps)(SongList);
+export default connect(null, mapPlayerDispatchToProps)(SongList);
