@@ -939,7 +939,7 @@ const handleScroll = (pos: any) => {
 
 
 
-## 11. RouteConfigComponentProps
+## 11. 路由Params
 
 - 处理 **Album** 组件还有另外一个问题，因为 **url** 中有 **id** 这个动态属性，获取该信息的手段有两种，一种是利用 **hooks** 中的 **useParms** ，另外是使用 **props.match.params** ，后者的使用前提是该组件被 **withRouter** 函数处理过
 - 在这里因为 **Header** 已经使用了 **props.history** 等 **api** 了，为了保持一致性，所以使用上述方法的后者
@@ -1004,4 +1004,208 @@ interface IDispatchProps {
 
 export default withRouter<AlbumProps, React.FC<AlbumProps>>(connect(mapStateToProps, mapDispatchToProps)(Album));
 ```
+
+
+
+## 12. 音乐播放
+
+- 根据 **Player** 的使用场景分为了 **mini** 和 **normal** 两个版本，基本的布局和 **redux** 数据管理这里不再赘述
+- 最重要的主要是控制音乐的播放，涉及 **\<audio\>** 标签，首先明确一点就是关于 **音乐** 的管理都是放在最上层 **Player** 组件管理的
+- 关于音乐播放需要维护 **当前时间currentTime** ，**音乐时长duration** ，**百分比percent** ，**播放列表playList** 
+
+```tsx
+const [currentTime, setCurrentTime] = useState(0);
+const [duration, setDuration] = useState(0);
+const percent = currentTime / duration * 100;
+
+useEffect(() => {
+    if (!sequencePlayList || sequencePlayList.length === 0)
+        return;
+    handleSongChange(0);
+}, [sequencePlayList])
+
+const handleSongChange = (index: number) => {
+    const song = playList[index];
+    audioRef.current!.src = getSongUrl(song.id);  // 设置 src
+    setCurrentTime(0);                            // 当前时间为0
+    setCurrentSong(song);                         // 设置当前歌曲
+    setCurrentIndex(index);                       // 设置当前索引
+    setDuration(song.dt / 1000 | 0);              // 设置音乐时长
+    if (playing) {
+        setTimeout(() => {                        // 进行音乐播放
+            audioRef.current!.play();
+        });
+    }
+}
+```
+
+
+
+- 两个子组件 **miniPlayer** 和 **normalPlayer** 根据 **percent** 等信息展示歌曲信息
+- 处理播放模式的切换：**单曲循环** ，**顺序播放** 和 **乱序播放** 。这里可以使用 **策略模式** 避免过多 **if else** 语句
+
+```tsx
+const modeStrategies = {
+    'loop': function () {
+        setPlayMode('loop');
+        setPlayList(currentSong ? [currentSong] : []);
+    },
+
+    'random': function () {
+        setPlayMode('random')
+        const newPlayList = shuffleList<PlayerTypes.Song>(sequencePlayList);  // 打乱playList
+        console.log(newPlayList, sequencePlayList);
+        setPlayList(newPlayList);
+        for (let i = 0; i < newPlayList.length; i++) {      // 更新index
+            if (newPlayList[i].id === currentSong?.id) {
+                setCurrentIndex(i);
+                break;
+            }
+        }
+    },
+
+    'sequence': function () {
+        setPlayMode('sequence')
+        setPlayList(sequencePlayList);
+        for (let i = 0; i < sequencePlayList.length; i++) {
+            if (sequencePlayList[i].id === currentSong?.id) {
+                setCurrentIndex(i);
+                break;
+            }
+        }
+    }
+}
+
+const handleModeChange = (newMode: playMode) => {
+    console.log('mode change', newMode);
+    const strategy = modeStrategies[newMode];
+    strategy();
+    if (playing) {
+        setTimeout(() => {
+            audioRef.current!.play();
+        });
+    }
+}
+```
+
+
+
+- 其中打乱playList的函数 **shuffleList** 放在 **utils.tsx** 里
+
+```tsx
+export function shuffleList<T>(list: T[]): T[] {
+    const len = list.length;
+    const resList = list.slice();
+    for (let i = 0; i < len; i++) {
+        const x = (Math.random() * len) | 0;
+        const y = (Math.random() * len) | 0;
+        const temp = resList[x];
+        resList[x] = resList[y];
+        resList[y] = temp;
+    }
+    return resList;
+}
+```
+
+
+
+- 然后是处理歌曲播放结束后下一首继续播放，以及播放过程中实时更新 **currentTime** 的逻辑，会触发 **\<audio\>** 的 **onEnded** 和 **onTimeUpdate**  事件
+
+```tsx
+const handleNextSong = () => {
+    const newIndex = (currentIndex + 1) % playList.length;
+    handleSongChange(newIndex);
+}
+
+const handleTimeUpdate = (e: any) => {
+    setCurrentTime(e.target.currentTime);
+}
+
+<audio
+    ref={audioRef}
+    onTimeUpdate={handleTimeUpdate}
+    onEnded={() => { handleNextSong() }}
+/>
+```
+
+
+
+## 13. ProgressBar
+
+- 前面音乐播放的逻辑还有一部分没有讲到，那就是 **normalPlayer** 里面的进度条逻辑
+- 分别有两个 **div** 表示 **outter** 和 **inner** 进度，然后添加一个 **div** 放在 **inner** 的最右侧呈现进度条按钮，这样便可以在更新 **inner-div** 的 **width** 的时候实现进度条自动更新的效果
+
+```tsx
+<div className='progress-bar-wrapper' onClick={handleProgressBarClick}>
+    <div className='progress-bar-outer' ref={progressOuterRef}></div>
+    <div className='progress-bar-inner' ref={progressInnerRef}>
+        <div className='progress-bar-btn' onTouchMove={handleTouchMove} />
+    </div>
+</div>
+```
+
+
+
+- 然后完成用户拖动进度条逻辑，会触发 **onTouchMove** 事件
+- 另外需要知道 **整个进度条宽度progressBarWidth** ，**进度条最左侧X坐标initialPosX** ，这个可以通过 **ref** 获取 **DOM** ，调用 **getBoundingClientRect** 
+
+```tsx
+useEffect(() => {
+    initialPosX.current = progressInnerRef.current!.getBoundingClientRect().x;  // 最左侧横坐标
+    progressBarWidth.current = progressOuterRef.current!.getBoundingClientRect().width;  // 进度条宽度
+    if (percentage) {
+        progressInnerRef.current!.style.width = `${Math.min(100, percentage)}%`;  // inner进度条宽度
+    }
+}, [percentage])
+```
+
+
+
+- 然后在 **handleTouchMove** 函数中获得最新拖动位置的横坐标，然后更新 **inner-div** 的百分比宽度
+- 另外因为进度条百分比改变了，这个时候也要通知上层组件，因此调用回调函数 **percentageChange** ，这样在 **NormalPlayer** 组件里就可以改变当前音乐的播放进度
+
+```tsx
+// 上层 Player 传入的回调函数
+const handleCurrentTimeChange = (newTime: number) => {
+    setCurrentTime(newTime);
+    audioRef.current!.currentTime = newTime;
+    if (playing) {
+        setTimeout(() => {
+            audioRef.current!.play();
+        });
+    }
+}
+
+// 上层 NormalPlayer 传入的回调函数
+const handleProgressChange = (percent: number) => {
+    const newTime = duration * percent / 100;
+    handleCurrentTimeChange(newTime);
+}
+
+const updateProgressBar = (posX: number) => {
+    const initialX = initialPosX.current;  // 进度条最左侧横坐标
+    const width = progressBarWidth.current;  // 进度条宽度
+    const newPercentage = Math.min((posX - initialX) / width * 100, 100);  // 计算百分比
+    progressInnerRef.current!.style.width = `${newPercentage}%`;  // 更新 width
+    percentageChange && percentageChange(newPercentage);  // 调用回调函数
+}
+
+const handleTouchMove = (e: React.TouchEvent) => {
+    const posX = e.touches[0].pageX;  // 获取最新横坐标
+    updateProgressBar(posX);  // 更新inner width
+}
+```
+
+
+
+- 至于用户点击改变进度的逻辑基本一致
+
+```tsx
+const handleProgressBarClick = (e: React.MouseEvent) => {
+    const posX = e.pageX;
+    updateProgressBar(posX);
+}
+```
+
+
 

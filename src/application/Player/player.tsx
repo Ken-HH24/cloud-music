@@ -32,8 +32,8 @@ const Player: React.FC<PlayerProps> = (props) => {
 
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const audioRef = useRef<HTMLAudioElement>(null);
     const percent = currentTime / duration * 100;
+    const audioRef = useRef<HTMLAudioElement>(null);
 
     const modeStrategies = {
         'loop': function () {
