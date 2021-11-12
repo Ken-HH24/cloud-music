@@ -77,6 +77,28 @@
     transition: all 0.4s;
 }
 
+.bottomToTop-enter {
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+.bottomToTop-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s;
+}
+
+.bottomToTop-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bottomToTop-exit-active {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0);

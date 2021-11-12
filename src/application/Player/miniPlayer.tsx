@@ -11,6 +11,7 @@ export interface MiniPlayerProps {
     fullScreen: boolean
     toggleFullScreen: Function
     togglePlaying: Function
+    toggleShowPlayList: (e: any, showPlayList: boolean) => void
 }
 
 const MiniPlayer: React.FC<MiniPlayerProps> = (props) => {
@@ -19,8 +20,9 @@ const MiniPlayer: React.FC<MiniPlayerProps> = (props) => {
         playing,
         percent,
         fullScreen,
+        togglePlaying,
         toggleFullScreen,
-        togglePlaying
+        toggleShowPlayList
     } = props;
 
     const renderControl = () => {
@@ -41,7 +43,11 @@ const MiniPlayer: React.FC<MiniPlayerProps> = (props) => {
                             />
                     }
                 </ProgressCircle>
-                <FontAwesomeIcon className='mini-player-icon slider' icon='sliders-h' />
+                <FontAwesomeIcon
+                    className='mini-player-icon slider'
+                    icon='sliders-h'
+                    onClick={(e) => { toggleShowPlayList(e, true) }}
+                />
             </div>
         )
     }

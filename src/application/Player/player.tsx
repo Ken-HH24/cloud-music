@@ -6,6 +6,7 @@ import { playMode } from '../../api/config';
 import { actionCreators, PlayerTypes } from './store';
 import { IPlayerState as IStateProps } from './store/reducer';
 import { getSongUrl, shuffleList } from '../../api/utils';
+import PlayList from '../../components/PlayList';
 
 export type PlayerProps = IStateProps & IDispatchProps;
 
@@ -15,6 +16,7 @@ const Player: React.FC<PlayerProps> = (props) => {
         fullScreen,
         playing,
         playList,
+        showPlaylist,
         currentIndex,
         currentSong,
         sequencePlayList
@@ -24,6 +26,7 @@ const Player: React.FC<PlayerProps> = (props) => {
         setFullScreen,
         setCurrentIndex,
         setCurrentSong,
+        setShowPlayList,
         setPlayingState,
         setPlayMode,
         setPlayList,
@@ -121,6 +124,11 @@ const Player: React.FC<PlayerProps> = (props) => {
         }
     }
 
+    const toggleShowPlayList = (e: MouseEvent, showPlayList: boolean) => {
+        e.stopPropagation();
+        setShowPlayList(showPlayList);
+    }
+
     const handleCurrentTimeChange = (newTime: number) => {
         setCurrentTime(newTime);
         audioRef.current!.currentTime = newTime;
@@ -160,6 +168,7 @@ const Player: React.FC<PlayerProps> = (props) => {
                     fullScreen={fullScreen}
                     toggleFullScreen={setFullScreen}
                     togglePlaying={togglePlaying}
+                    toggleShowPlayList={toggleShowPlayList}
                 />
             }
             {
@@ -185,6 +194,7 @@ const Player: React.FC<PlayerProps> = (props) => {
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={() => { handleNextSong() }}
             />
+            <PlayList isShow={showPlaylist} />
         </div>
     )
 }

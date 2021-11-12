@@ -1,10 +1,26 @@
+import { playMode } from '../../../api/config';
 import * as actionCreators from './actionCreators';
 import * as PlayerTypes from './types';
 import playerReducer from './reducer';
 
+export interface IPlayerStateProps {
+    mode: playMode
+    showPlayList: boolean
+    sequencePlayList: PlayerTypes.Song[]
+}
+
 export interface IPlayerDispatchProps {
     changeSequencePlayList: (data: PlayerTypes.Song[]) => void
     changeCurrentSong: (data: PlayerTypes.Song) => void
+    changeShowPlayList: (data: boolean) => void
+}
+
+const mapPlayerStateToProps = (state: { player: IPlayerStateProps }): IPlayerStateProps => {
+    return {
+        mode: state.player.mode,
+        showPlayList: state.player.showPlayList,
+        sequencePlayList: state.player.sequencePlayList,
+    }
 }
 
 const mapPlayerDispatchToProps = (dispatch: any): IPlayerDispatchProps => {
@@ -17,8 +33,13 @@ const mapPlayerDispatchToProps = (dispatch: any): IPlayerDispatchProps => {
         changeCurrentSong(data: PlayerTypes.Song) {
             const action = actionCreators.setCurrentSong(data);
             dispatch(action);
+        },
+
+        changeShowPlayList(data: boolean) {
+            const action = actionCreators.setShowPlayList(data);
+            dispatch(action);
         }
     }
 }
 
-export { playerReducer, actionCreators, PlayerTypes, mapPlayerDispatchToProps };
+export { playerReducer, actionCreators, PlayerTypes, mapPlayerDispatchToProps, mapPlayerStateToProps };
