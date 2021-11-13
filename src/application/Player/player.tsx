@@ -186,6 +186,7 @@ const Player: React.FC<PlayerProps> = (props) => {
                     toggleNextSong={handleNextSong}
                     togglePrevSong={handlePrevSong}
                     toggleModeChange={handleModeChange}
+                    toggleShowPlayList={toggleShowPlayList}
                     handleCurrentTimeChange={handleCurrentTimeChange}
                 />
             }

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { modeToIcon } from '../../api/config';
 import { IPlayerStateProps, mapPlayerStateToProps, IPlayerDispatchProps, mapPlayerDispatchToProps } from '../../application/Player/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import Scroll from '../Scroll';
+import { useClickOutside } from '../../hooks/useClickOutside';
 
 interface BasePlayListProps {
     isShow: boolean
@@ -21,10 +22,17 @@ const PlayList: React.FC<PlayListProps> = (props) => {
     } = props;
 
     const tracks = sequencePlayList!;
+    const playListRef = useRef<HTMLDivElement>(null);
 
-    const handlePlayListClose = () => {
+    const handlePlayListClose = (e: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         changeShowPlayList && changeShowPlayList(false);
     }
+
+    useClickOutside(playListRef, handlePlayListClose);
 
     return (
         <CSSTransition
@@ -35,14 +43,13 @@ const PlayList: React.FC<PlayListProps> = (props) => {
             unmountOnExit
             classNames='bottomToTop'
         >
-            <div className='playList'>
+            <div className='playList' ref={playListRef}>
                 <header>
                     <FontAwesomeIcon icon={modeToIcon[mode!]} />
                     <span>{mode}</span>
                 </header>
                 <Scroll>
                     <main>
-
                         {
                             tracks.map(track => {
                                 return (
@@ -54,11 +61,10 @@ const PlayList: React.FC<PlayListProps> = (props) => {
                                 )
                             })
                         }
-
                     </main>
                 </Scroll>
                 <footer>
-                    <span onClick={() => { handlePlayListClose() }}>close</span>
+                    <span onClick={(e) => { handlePlayListClose(e) }}>close</span>
                 </footer>
             </div>
         </CSSTransition>

@@ -19,6 +19,7 @@ export interface NormalPlayerProps {
     togglePlaying: Function
     toggleNextSong: Function
     togglePrevSong: Function
+    toggleShowPlayList: (e: any, showPlayList: boolean) => void
     toggleModeChange: (mode: playMode) => void
     handleCurrentTimeChange: Function
 }
@@ -37,6 +38,7 @@ const NormalPlayer: React.FC<NormalPlayerProps> = (props) => {
         toggleNextSong,
         togglePrevSong,
         toggleModeChange,
+        toggleShowPlayList,
         handleCurrentTimeChange
     } = props;
 
@@ -101,7 +103,7 @@ const NormalPlayer: React.FC<NormalPlayerProps> = (props) => {
                                 : <FontAwesomeIcon icon='play-circle' onClick={(e) => { togglePlaying(e, true) }} />
                         }
                         <FontAwesomeIcon icon='step-forward' onClick={() => { toggleNextSong() }} />
-                        <FontAwesomeIcon icon='list-ul' />
+                        <FontAwesomeIcon icon='list-ul' onClick={(e) => { toggleShowPlayList(e, true) }} />
                     </div>
                 </div>
             </div>
