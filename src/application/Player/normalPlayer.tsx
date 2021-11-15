@@ -19,7 +19,7 @@ export interface NormalPlayerProps {
     togglePlaying: Function
     toggleNextSong: Function
     togglePrevSong: Function
-    toggleShowPlayList: (e: any, showPlayList: boolean) => void
+    toggleShowPlayList: (e: React.MouseEvent, showPlayList: boolean) => void
     toggleModeChange: (mode: playMode) => void
     handleCurrentTimeChange: Function
 }

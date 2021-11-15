@@ -14,8 +14,10 @@
         padding: 0.6em 0.8em 0.4em 0.8em;
         border-bottom: 2px solid $theme-gray;
 
-        & > span {
-            margin-left: 1em;
+        .playList-mode {
+            & > span {
+                margin-left: 1em;
+            }
         }
     }
 
@@ -38,12 +40,21 @@
 
             & > span:nth-of-type(2) {
                 margin-left: 1em;
+                margin-right: 1em;
                 font-weight: 200;
                 font-size: 0.6em;
             }
 
-            svg {
+            .delete {
                 margin-left: auto;
+            }
+
+            &.isPlaying {
+                color: $theme-red;
+
+                .delete {
+                    color: initial;
+                }
             }
         }
     }
@@ -57,7 +68,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: .5em 0;
+        padding: 0.5em 0;
         border-top: solid 2px $theme-gray;
     }
 }

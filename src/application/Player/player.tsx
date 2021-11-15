@@ -124,7 +124,7 @@ const Player: React.FC<PlayerProps> = (props) => {
         }
     }
 
-    const toggleShowPlayList = (e: MouseEvent, showPlayList: boolean) => {
+    const toggleShowPlayList = (e: React.MouseEvent, showPlayList: boolean) => {
         e.stopPropagation();
         setShowPlayList(showPlayList);
     }
@@ -195,7 +195,10 @@ const Player: React.FC<PlayerProps> = (props) => {
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={() => { handleNextSong() }}
             />
-            <PlayList isShow={showPlaylist} />
+            <PlayList
+                isShow={showPlaylist}
+                handleModeChange={handleModeChange}
+            />
         </div>
     )
 }

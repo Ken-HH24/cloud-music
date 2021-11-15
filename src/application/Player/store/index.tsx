@@ -1,11 +1,12 @@
 import { playMode } from '../../../api/config';
 import * as actionCreators from './actionCreators';
 import * as PlayerTypes from './types';
-import playerReducer from './reducer';
+import playerReducer, { IPlayerState } from './reducer';
 
 export interface IPlayerStateProps {
     mode: playMode
     showPlayList: boolean
+    currentSong: PlayerTypes.Song | null
     sequencePlayList: PlayerTypes.Song[]
 }
 
@@ -15,10 +16,11 @@ export interface IPlayerDispatchProps {
     changeShowPlayList: (data: boolean) => void
 }
 
-const mapPlayerStateToProps = (state: { player: IPlayerStateProps }): IPlayerStateProps => {
+const mapPlayerStateToProps = (state: { player: IPlayerState }): IPlayerStateProps => {
     return {
         mode: state.player.mode,
-        showPlayList: state.player.showPlayList,
+        currentSong: state.player.currentSong,
+        showPlayList: state.player.showPlaylist,
         sequencePlayList: state.player.sequencePlayList,
     }
 }
